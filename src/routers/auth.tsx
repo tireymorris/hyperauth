@@ -58,30 +58,40 @@ authRouter.get('/login', async (c) => {
       <form action="/auth/login" method="post" class="space-y-6">
         <input type="hidden" name="csrf" value={csrfToken} />
 
-        <div class="mb-6 space-y-2 text-center">
-          <h2 class="bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-xl font-semibold text-transparent">
-            Welcome to HyperAuth
-          </h2>
-          <p class="text-sm text-gray-400">Enter your email to sign in or create an account</p>
+        <div class="text-center space-y-3">
+          <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-violet-500/20 border border-white/10 mb-2">
+            <svg class="w-7 h-7 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"
+              />
+            </svg>
+          </div>
+          <h1 class="text-2xl font-semibold gradient-text text-glow">Welcome back</h1>
+          <p class="text-sm text-slate-400">Enter your email to receive a secure login link</p>
         </div>
 
         <div class="space-y-2">
-          <label for="email" class="block text-sm font-medium text-gray-300">
+          <label for="email" class="block text-sm font-medium text-slate-300">
             Email address
           </label>
-          <Input id="email" name="email" type="email" className="w-full" placeholder="yourname@company.com" required />
+          <Input id="email" name="email" type="email" placeholder="you@example.com" required />
         </div>
 
-        <Button variant="primary" className="w-full" type="submit" hx-boost="true">
-          Send login link
+        <Button variant="primary" className="w-full" type="submit">
+          Continue with email
         </Button>
       </form>
 
-      <footer class="mt-6 text-center">
-        <p class="text-center text-sm text-gray-500">
-          Your data is encrypted and secure with <span class="font-medium text-gray-300">HyperAuth</span>
+      <div class="mt-8 pt-6 border-t border-white/5">
+        <p class="text-center text-xs text-slate-500">
+          Protected by <span class="text-slate-400 font-medium">HyperAuth</span>
+          <span class="mx-2 text-slate-600">•</span>
+          <span class="text-slate-500">End-to-end encrypted</span>
         </p>
-      </footer>
+      </div>
     </Layout>,
     HTTP_STATUS.OK
   );
@@ -115,11 +125,18 @@ authRouter.post('/auth/login', async (c) => {
     c.status(HTTP_STATUS.BAD_REQUEST);
     return c.html(
       <Layout title="Invalid Email" c={c}>
-        <div class="mx-auto flex max-w-screen-sm flex-col space-y-6 p-8">
-          <h1 class="text-2xl font-bold">Invalid Email Format</h1>
-          <p>Please enter a valid email address.</p>
-          <Button hx-get="/login" hx-target="body" hx-swap="outerHTML">
-            Back to Login
+        <div class="text-center space-y-6">
+          <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-rose-500/10 border border-rose-500/20">
+            <svg class="w-7 h-7 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-xl font-semibold text-slate-100">Invalid email format</h2>
+            <p class="mt-2 text-sm text-slate-400">Please enter a valid email address to continue.</p>
+          </div>
+          <Button hx-get="/login" hx-target="body" hx-swap="outerHTML" variant="secondary" className="w-full">
+            Try again
           </Button>
         </div>
       </Layout>
@@ -142,11 +159,25 @@ authRouter.post('/auth/login', async (c) => {
       c.status(HTTP_STATUS.OK);
       return c.html(
         <Layout title="Development Login" c={c}>
-          <h2 class="text-xl font-bold text-blue-400">🔑 Development mode</h2>
-          <p class="mt-2 text-gray-300">Check the console for the magic link URL.</p>
-          <Button hx-get="/login" hx-target="body" hx-swap="outerHTML">
-            Back to login
-          </Button>
+          <div class="text-center space-y-6">
+            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/20">
+              <svg class="w-7 h-7 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="1.5"
+                  d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                />
+              </svg>
+            </div>
+            <div>
+              <h2 class="text-xl font-semibold text-slate-100">Development mode</h2>
+              <p class="mt-2 text-sm text-slate-400">Check the console for the magic link URL.</p>
+            </div>
+            <Button hx-get="/login" hx-target="body" hx-swap="outerHTML" variant="secondary" className="w-full">
+              Back to login
+            </Button>
+          </div>
         </Layout>
       );
     }
@@ -157,11 +188,22 @@ authRouter.post('/auth/login', async (c) => {
       c.status(HTTP_STATUS.INTERNAL_SERVER_ERROR);
       return c.html(
         <Layout title="Error Sending Link" c={c}>
-          <h2 class="text-xl font-bold text-red-500">❌ Failed to send magic link</h2>
-          <p class="mt-2 text-gray-300">There was an issue sending the login link. Please try again later.</p>
-          <Button hx-get="/login" hx-target="body" hx-swap="outerHTML">
-            Back to login
-          </Button>
+          <div class="text-center space-y-6">
+            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-rose-500/10 border border-rose-500/20">
+              <svg class="w-7 h-7 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </div>
+            <div>
+              <h2 class="text-xl font-semibold text-slate-100">Unable to send link</h2>
+              <p class="mt-2 text-sm text-slate-400">
+                There was an issue sending the login link. Please try again later.
+              </p>
+            </div>
+            <Button hx-get="/login" hx-target="body" hx-swap="outerHTML" variant="secondary" className="w-full">
+              Try again
+            </Button>
+          </div>
         </Layout>
       );
     }
@@ -170,13 +212,27 @@ authRouter.post('/auth/login', async (c) => {
     c.status(HTTP_STATUS.OK);
     return c.html(
       <Layout title="Check Your Email" c={c}>
-        <h2 class="text-xl font-bold text-blue-400">✉️ Check your email</h2>
-        <p class="mt-2 text-gray-300">
-          We've sent a magic link to <strong>{email}</strong>. Click the link in the email to log in.
-        </p>
-        <footer class="mt-4 text-center text-xs text-gray-500">
-          Can't find the email? Check your spam folder or try again.
-        </footer>
+        <div class="text-center space-y-6">
+          <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/20">
+            <svg class="w-7 h-7 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="1.5"
+                d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+              />
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-xl font-semibold text-slate-100">Check your inbox</h2>
+            <p class="mt-2 text-sm text-slate-400">
+              We've sent a magic link to <span class="text-cyan-400 font-medium">{email}</span>
+            </p>
+          </div>
+          <div class="pt-4 border-t border-white/5">
+            <p class="text-xs text-slate-500">Can't find the email? Check your spam folder.</p>
+          </div>
+        </div>
       </Layout>
     );
   } catch (error) {
@@ -186,11 +242,20 @@ authRouter.post('/auth/login', async (c) => {
     c.status(HTTP_STATUS.INTERNAL_SERVER_ERROR);
     return c.html(
       <Layout title="Error" c={c}>
-        <h2 class="text-xl font-bold text-red-500">❌ Error</h2>
-        <p class="mt-2 text-gray-300">An unexpected error occurred. Please try again later.</p>
-        <Button hx-get="/login" hx-target="body" hx-swap="outerHTML">
-          Back to login
-        </Button>
+        <div class="text-center space-y-6">
+          <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-rose-500/10 border border-rose-500/20">
+            <svg class="w-7 h-7 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-xl font-semibold text-slate-100">Something went wrong</h2>
+            <p class="mt-2 text-sm text-slate-400">An unexpected error occurred. Please try again later.</p>
+          </div>
+          <Button hx-get="/login" hx-target="body" hx-swap="outerHTML" variant="secondary" className="w-full">
+            Try again
+          </Button>
+        </div>
       </Layout>
     );
   }
@@ -250,10 +315,24 @@ authRouter.get('/auth/verify', async (c) => {
     logHandler.debug('auth', 'Blacklisted magic token');
 
     return c.html(
-      <Layout title="Authentication Successful" c={c} authenticatedUser={payload}>
-        <div class="text-center space-y-4">
-          <h2 class="text-xl font-bold text-green-400">✅ Authentication successful</h2>
-          <p class="text-gray-300">You are now logged in.</p>
+      <Layout title="Welcome" c={c} authenticatedUser={payload}>
+        <div class="text-center space-y-6">
+          <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
+            <svg class="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-xl font-semibold text-slate-100">You're in!</h2>
+            <p class="mt-2 text-sm text-slate-400">
+              Signed in as <span class="text-cyan-400 font-medium">{payload.email}</span>
+            </p>
+          </div>
+          <a href="/" class="block">
+            <Button variant="primary" className="w-full">
+              Continue to dashboard
+            </Button>
+          </a>
         </div>
       </Layout>
     );

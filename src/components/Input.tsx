@@ -34,7 +34,7 @@ const Input: FC<InputProps> = ({
       disabled={disabled}
       maxlength={maxlength}
       id={id}
-      className={`w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-base text-white placeholder-gray-400 backdrop-blur-sm transition-all duration-300 hover:border-white/20 focus:border-blue-500/50 focus:bg-white/10 focus:outline-none focus:ring-2 focus:ring-blue-500/20 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+      class={`glass-input ${className} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
       {...props}
     />
   );

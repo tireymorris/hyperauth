@@ -82,7 +82,7 @@ describe('Verify complete authentication flow works end-to-end', () => {
     const verifyRes = await app.request(`/auth/verify?token=${token}`);
     expect(verifyRes.status).toBe(200);
     const verifyBody = await verifyRes.text();
-    expect(verifyBody).toContain('Authentication successful');
+    expect(verifyBody).toContain('Signed in as');
 
     // 4. Check cookies contain access and refresh tokens
     const setCookie = verifyRes.headers.get('set-cookie');
