@@ -1,0 +1,40 @@
+# See https://fly.io/docs/app-guides/continuous-deployment-with-github-actions/
+
+name: fly-deploy
+
+on:
+  # push: branches: [master]
+  workflow_call:
+
+concurrency:
+  group: staging
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    if: github.ref != 'refs/heads/master'
+    name: fly-deploy
+    needs: [check, typecheck, format, unit]
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/load-env
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy --remote-only
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          APP_NAME: ${{ env.APP_NAME }}
+          EMAIL_FROM: ${{ env.EMAIL_FROM }}
+          RESEND_API_KEY: ${{ env.RESEND_API_KEY }}
+          SECRET_KEY: ${{ env.SECRET_KEY }}
+
+  # Required jobs from other workflows
+  check:
+    uses: ./.github/workflows/check-workflows.yml
+  typecheck:
+    uses: ./.github/workflows/typecheck.yml
+  format:
+    uses: ./.github/workflows/format.yml
+  unit:
+    uses: ./.github/workflows/unit.yml

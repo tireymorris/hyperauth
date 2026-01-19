@@ -1,0 +1,113 @@
+import tsParser from '@typescript-eslint/parser';
+import tsPlugin from '@typescript-eslint/eslint-plugin';
+import jsdocPlugin from 'eslint-plugin-jsdoc';
+import eslintCommentsPlugin from 'eslint-plugin-eslint-comments';
+import customCommentsPlugin from './eslint-custom-comments-plugin.js';
+
+export default [
+  {
+    files: ['src/**/*.{ts,tsx}'],
+    languageOptions: {
+      parser: tsParser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+        ecmaFeatures: {
+          jsx: true,
+        },
+        project: './tsconfig.json',
+      },
+    },
+    plugins: {
+      '@typescript-eslint': tsPlugin,
+      jsdoc: jsdocPlugin,
+      'eslint-comments': eslintCommentsPlugin,
+      'custom-comments': customCommentsPlugin,
+    },
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          patterns: [
+            {
+              group: ['.*'],
+              message: 'Use absolute imports with @ prefix instead. Example: @/components/Layout',
+            },
+          ],
+        },
+      ],
+      'no-console': 'error',
+      'no-debugger': 'error',
+      '@typescript-eslint/explicit-function-return-type': 'error',
+      '@typescript-eslint/no-explicit-any': 'error',
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-non-null-assertion': 'error',
+      '@typescript-eslint/prefer-nullish-coalescing': 'off',
+      '@typescript-eslint/prefer-optional-chain': 'off',
+      '@typescript-eslint/no-unnecessary-type-assertion': 'off',
+      '@typescript-eslint/no-unnecessary-type-constraint': 'off',
+      '@typescript-eslint/no-unnecessary-condition': 'off',
+      '@typescript-eslint/no-unnecessary-boolean-literal-compare': 'off',
+      '@typescript-eslint/prefer-as-const': 'off',
+      '@typescript-eslint/no-array-constructor': 'off',
+      '@typescript-eslint/no-empty-function': 'off',
+      '@typescript-eslint/no-empty-interface': 'off',
+      '@typescript-eslint/no-extra-non-null-assertion': 'off',
+      '@typescript-eslint/no-floating-promises': 'off',
+      '@typescript-eslint/no-for-in-array': 'off',
+      '@typescript-eslint/no-implied-eval': 'off',
+      '@typescript-eslint/no-misused-new': 'off',
+      '@typescript-eslint/no-misused-promises': 'off',
+      '@typescript-eslint/no-namespace': 'off',
+      '@typescript-eslint/no-this-alias': 'off',
+      '@typescript-eslint/no-throw-literal': 'off',
+      '@typescript-eslint/no-unnecessary-qualifier': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+      '@typescript-eslint/prefer-function-type': 'off',
+      '@typescript-eslint/prefer-includes': 'off',
+      '@typescript-eslint/prefer-readonly': 'off',
+      '@typescript-eslint/prefer-string-starts-ends-with': 'off',
+      '@typescript-eslint/prefer-ts-expect-error': 'off',
+      '@typescript-eslint/require-array-sort-compare': 'off',
+      '@typescript-eslint/require-await': 'off',
+      '@typescript-eslint/restrict-plus-operands': 'off',
+      '@typescript-eslint/restrict-template-expressions': 'off',
+      '@typescript-eslint/return-await': 'off',
+      '@typescript-eslint/strict-boolean-expressions': 'off',
+      '@typescript-eslint/switch-exhaustiveness-check': 'off',
+      '@typescript-eslint/unbound-method': 'off',
+      '@typescript-eslint/unified-signatures': 'off',
+      'no-duplicate-imports': 'error',
+      'sort-imports': ['error', { ignoreDeclarationSort: true }],
+      '@typescript-eslint/no-magic-numbers': 'off',
+      'jsdoc/no-types': 'error',
+      'jsdoc/require-jsdoc': 'off',
+      'jsdoc/require-param': 'off',
+      'jsdoc/require-returns': 'off',
+      'jsdoc/require-description': 'off',
+      'no-warning-comments': ['error', { terms: ['todo', 'fixme', 'xxx', 'note'], location: 'anywhere' }],
+      'spaced-comment': ['error', 'never'],
+      'multiline-comment-style': ['error', 'starred-block'],
+      'lines-around-comment': [
+        'error',
+        { beforeBlockComment: false, afterBlockComment: false, beforeLineComment: false, afterLineComment: false },
+      ],
+      'no-inline-comments': 'error',
+      'eslint-comments/no-use': 'error',
+      'custom-comments/no-comments': 'error',
+    },
+  },
+  {
+    files: ['src/__tests__/**/*.ts', 'src/__tests__/**/*.tsx'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      'eslint-comments/no-use': 'off',
+      'spaced-comment': 'off',
+      'custom-comments/no-comments': 'off',
+    },
+  },
+];

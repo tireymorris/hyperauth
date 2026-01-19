@@ -1,0 +1,19 @@
+name: 'Load environment variables'
+description: 'Loads environment variables from .env file if present, otherwise uses CI environment variables'
+
+runs:
+  using: composite
+  steps:
+    - name: Load .env file
+      shell: bash
+      run: |
+        if [ -f .env ]; then
+          while IFS='=' read -r key value; do
+            if [ -n "$key" ] && [ "${key:0:1}" != "#" ]; then
+              echo "$key=$value" >> $GITHUB_ENV
+            fi
+          done < .env
+          echo "Loaded environment variables from .env file"
+        else
+          echo "No .env file found, using environment variables from CI"
+        fi

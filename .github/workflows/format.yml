@@ -1,0 +1,20 @@
+name: format
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_call:
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+      - uses: ./.github/actions/load-env
+      - run: bun install
+      - run: rm -rf node_modules/.cache/prettier
+      - name: Run prettier check
+        run: bun x prettier --write "src/**/*.{ts,tsx,js,jsx,css,scss,html,md}" public/js --check

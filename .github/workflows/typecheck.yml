@@ -1,0 +1,18 @@
+name: typecheck
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_call:
+
+jobs:
+  typecheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v1
+      - uses: ./.github/actions/load-env
+      - run: bun install
+      - run: bun run typecheck

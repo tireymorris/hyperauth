@@ -1,0 +1,83 @@
+{
+  "name": "hyperauth",
+  "version": "0.3.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "bun build:css && bun build --compile ./src/server.tsx",
+    "build:css": "mkdir -p public/styles && unocss \"src/**/*.tsx\" \"src/**/*.ts\" -o public/styles/uno.css --config src/styles/uno.config.ts",
+    "build:css:watch": "mkdir -p public/styles && unocss \"src/**/*.tsx\" \"src/**/*.ts\" -o public/styles/uno.css --config src/styles/uno.config.ts --watch",
+    "check-updates": "bun x npm-check-updates -u && bun install",
+    "dev": "bun run build:css:watch & bun --hot src/server.tsx",
+    "format:check": "bun x prettier@3.5.1 --check \"src/**/*.{ts,tsx,js,jsx,css,scss,html,md}\"",
+    "kill": "pkill -9 -f 'bun --watch src/server.tsx' || true",
+    "lint": "bun x eslint \"src/**/*.{ts,tsx}\"",
+    "precommit": "bun run typecheck && bun run format:check && bun run lint && bun run test:unit",
+    "prepare": "husky",
+    "prettier": "bun x prettier@3.5.1 --write \"src/**/*.{ts,tsx,js,jsx,css,scss,html,md}\"",
+    "server": "bun --watch src/server.tsx",
+    "setup": "./setup.sh",
+    "test:unit": "USE_BLOB_SAS_TOKEN=false bun test src tests",
+    "test:e2e": "bunx playwright test",
+    "test:e2e:ui": "bunx playwright test --ui",
+    "test:e2e:headed": "bunx playwright test --headed",
+    "test:coverage": "USE_BLOB_SAS_TOKEN=false bun test --coverage",
+    "test:coverage:report": "USE_BLOB_SAS_TOKEN=false bun test --coverage --coverage-reporter html",
+    "typecheck": "bun x tsc --noEmit"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.19.9",
+    "@hono/zod-validator": "^0.7.6",
+    "@unocss/preset-web-fonts": "^66.6.0",
+    "hono": "^4.11.4",
+    "jose": "^6.1.3",
+    "resend": "^6.8.0",
+    "unocss": "^66.6.0",
+    "zod": "^4.3.5"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.57.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@types/eslint": "^9.6.1",
+    "@types/node": "^25.0.9",
+    "@typescript-eslint/eslint-plugin": "^8.53.1",
+    "@typescript-eslint/parser": "^8.53.1",
+    "@unocss/cli": "^66.6.0",
+    "bun-types": "^1.3.6",
+    "cross-env": "^10.1.0",
+    "dotenv": "^17.2.3",
+    "eslint": "^9.39.2",
+    "eslint-plugin-eslint-comments": "^3.2.0",
+    "eslint-plugin-jsdoc": "^62.2.0",
+    "husky": "^9.1.7",
+    "nodemon": "^3.1.11",
+    "prettier": "3.8.0",
+    "prettier-plugin-tailwindcss": "^0.7.2",
+    "terser": "^5.46.0",
+    "typescript": "^5.9.3"
+  },
+  "module": "src/server.tsx",
+  "husky": {
+    "hooks": {
+      "pre-commit": "bun run precommit"
+    }
+  },
+  "bun": {
+    "test": {
+      "coverage": true,
+      "coverageThreshold": {
+        "global": {
+          "lines": 80,
+          "functions": 80,
+          "branches": 70,
+          "statements": 80
+        }
+      },
+      "coverageIgnorePatterns": [
+        "assets/**",
+        "__tests__/**",
+        "node_modules/**"
+      ]
+    }
+  }
+}
