@@ -1,0 +1,102 @@
+{
+  "project_name": "HyperAuth UI Component Migration to Shadcn",
+  "branch_name": "feature/migrate-to-shadcn-components",
+  "stories": [
+    {
+      "id": "story-1",
+      "title": "Migrate styling system from UnoCSS to Tailwind CSS",
+      "description": "Replace UnoCSS with Tailwind CSS to enable shadcn/ui compatibility. Update build scripts, remove UnoCSS dependencies, install Tailwind, and update configuration files.",
+      "acceptance_criteria": [
+        "UnoCSS is removed from package.json",
+        "Tailwind CSS is installed and configured",
+        "Build scripts updated to use Tailwind instead of UnoCSS",
+        "Existing component classes are migrated to Tailwind equivalents",
+        "Application builds and starts without styling errors"
+      ],
+      "test_spec": "Integration test guidance: 1) Start the application server, 2) Navigate to the main page (http://localhost:3000 or configured port), 3) Assert that the page loads without console errors related to styling, 4) Verify that elements with migrated classes (e.g., button with 'bg-blue-500' instead of 'glass-button') render correctly by checking computed styles or visibility, 5) Assert that no UnoCSS-related assets are loaded.",
+      "priority": 1,
+      "passes": false,
+      "retry_count": 0
+    },
+    {
+      "id": "story-2",
+      "title": "Install and configure shadcn/ui",
+      "description": "Install shadcn/ui CLI, initialize configuration with components.json, set up component directory structure, and verify basic setup.",
+      "acceptance_criteria": [
+        "shadcn/ui CLI is installed",
+        "components.json is created and configured",
+        "Basic shadcn component (e.g., Button) can be added and imported",
+        "TypeScript types are properly resolved",
+        "Build process includes new components"
+      ],
+      "test_spec": "Integration test guidance: 1) Start the application server, 2) Navigate to a test page or component showcase, 3) Assert that shadcn components render without errors (e.g., Button component displays with default styling), 4) Verify that Tailwind classes are applied correctly by checking DOM elements, 5) Confirm previous styling migration still works (cumulative: ensure migrated Tailwind classes from story-1 are still functional).",
+      "priority": 1,
+      "passes": false,
+      "retry_count": 0
+    },
+    {
+      "id": "story-3",
+      "title": "Replace custom Button component with shadcn Button",
+      "description": "Update all imports and usages of the custom Button component to use shadcn/ui Button. Preserve existing variants and props mapping.",
+      "acceptance_criteria": [
+        "Custom Button.tsx is replaced with shadcn Button import",
+        "All existing Button props (variant, disabled, onclick, hx-* attrs) are mapped to shadcn equivalents",
+        "Visual styling matches original glass-button appearance",
+        "All files importing Button are updated",
+        "TypeScript compilation succeeds"
+      ],
+      "test_spec": "Integration test guidance: 1) Start the application server, 2) Navigate to pages using Button (e.g., auth routes), 3) Assert primary Button variant renders with correct styling (e.g., element with class 'button' has expected background color), 4) Click a Button and verify onclick or hx-post triggers expected behavior, 5) Test secondary and danger variants by asserting their unique styles, 6) Confirm previous stories: Tailwind migration (no styling errors) and shadcn setup (components load) still work.",
+      "priority": 2,
+      "passes": false,
+      "retry_count": 0
+    },
+    {
+      "id": "story-4",
+      "title": "Replace custom Input component with shadcn Input",
+      "description": "Update all imports and usages of the custom Input component to use shadcn/ui Input. Map existing props and styling.",
+      "acceptance_criteria": [
+        "Custom Input.tsx is replaced with shadcn Input import",
+        "All existing Input props (type, name, placeholder, required, etc.) are supported",
+        "Visual styling matches original glass-input appearance",
+        "Form validation and disabled states work correctly",
+        "All files importing Input are updated"
+      ],
+      "test_spec": "Integration test guidance: 1) Start the application server, 2) Navigate to auth forms or pages with Input fields, 3) Assert Input elements render with correct styling (e.g., element with name 'email' has class 'input'), 4) Type text into an Input and assert value updates, 5) Test required validation by submitting form without input and checking error display, 6) Verify disabled state by asserting cursor-not-allowed style, 7) Confirm cumulative: Button replacement works, and previous styling/setup tests pass.",
+      "priority": 2,
+      "passes": false,
+      "retry_count": 0
+    },
+    {
+      "id": "story-5",
+      "title": "Replace custom Toast component with shadcn Toast",
+      "description": "Update Toast component to use shadcn/ui Toast system. Migrate existing toast functionality and styling.",
+      "acceptance_criteria": [
+        "Custom Toast.tsx is replaced with shadcn ToastProvider and Toaster",
+        "Existing toast trigger logic is adapted to shadcn API",
+        "Toast display and dismissal work correctly",
+        "Styling matches original appearance",
+        "All toast usages are updated"
+      ],
+      "test_spec": "Integration test guidance: 1) Start the application server, 2) Trigger a toast (e.g., via form submission or button click that shows toast), 3) Assert toast appears with correct message and styling (e.g., element with role 'alert' contains expected text), 4) Wait for auto-dismiss or click dismiss button and assert toast disappears, 5) Test multiple toasts if applicable, 6) Confirm cumulative: Button, Input, and previous tests still pass.",
+      "priority": 3,
+      "passes": false,
+      "retry_count": 0
+    },
+    {
+      "id": "story-6",
+      "title": "Update Layout and Navigation components to use shadcn components",
+      "description": "Refactor Layout and Navigation components to incorporate shadcn/ui components where applicable (e.g., for buttons, inputs within navigation).",
+      "acceptance_criteria": [
+        "Layout.tsx updated to use shadcn components for interactive elements",
+        "Navigation.tsx migrated to shadcn equivalents",
+        "IconButton component replaced or adapted to shadcn",
+        "Overall layout and navigation functionality preserved",
+        "Responsive design maintained"
+      ],
+      "test_spec": "Integration test guidance: 1) Start the application server, 2) Navigate through different pages, 3) Assert navigation elements render correctly (e.g., nav links are clickable and styled), 4) Test responsive layout by resizing window and verifying elements adapt, 5) Click navigation buttons and assert page changes, 6) Confirm cumulative: All previous components (Button, Input, Toast) work, and overall app styling is consistent.",
+      "priority": 3,
+      "passes": false,
+      "retry_count": 0
+    }
+  ]
+}
