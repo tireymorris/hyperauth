@@ -1,4 +1,6 @@
 import type { Child, FC } from 'hono/jsx';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface IconButtonProps {
   onClick?: string;
@@ -22,15 +24,20 @@ const IconButton: FC<IconButtonProps> = (props) => {
   });
 
   return (
-    <button
-      class={`flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border-0 bg-black/40 text-white/70 ring-0 backdrop-blur-sm transition-all duration-200 hover:bg-black/60 hover:text-white focus:outline-none focus:ring-1 focus:ring-blue-400/30 ${className}`}
+    <Button
+      variant="ghost"
+      size="icon"
+      className={cn(
+        'flex h-8 w-8 cursor-pointer items-center justify-center rounded-lg border-0 bg-black/40 text-white/70 ring-0 backdrop-blur-sm transition-all duration-200 hover:bg-black/60 hover:text-white focus:outline-none focus:ring-1 focus:ring-blue-400/30',
+        className
+      )}
       {...(onClick ? { 'hx-on': `click: ${onClick}` } : {})}
       {...hxAttrs}
       type="button"
       title={title}
     >
       {children}
-    </button>
+    </Button>
   );
 };
 
