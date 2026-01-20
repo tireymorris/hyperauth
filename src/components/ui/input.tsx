@@ -2,9 +2,7 @@ import type { FC } from 'hono/jsx';
 
 import { cn } from '@/lib/utils';
 
-type InputProps = JSX.HTMLAttributes<HTMLInputElement>;
-
-const Input: FC<InputProps> = ({ className, disabled, ...props }) => {
+const Input: FC = ({ className, disabled, ...props }) => {
   return (
     <input
       className={cn(
