@@ -1,4 +1,6 @@
 import type { Child, FC } from 'hono/jsx';
+import { Button as ShadcnButton } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface ButtonProps {
   children: Child;
@@ -32,26 +34,22 @@ const Button: FC<ButtonProps> = (props) => {
     ...restProps
   } = props;
 
-  const variantClass =
-    variant === 'secondary' ? 'glass-button-secondary' : variant === 'danger' ? 'glass-button-danger' : '';
-
-  const hxAttrs: Record<string, string> = {};
-  Object.keys(restProps).forEach((key) => {
-    if (key.startsWith('hx-')) {
-      hxAttrs[key] = String(restProps[key as keyof typeof restProps]);
-    }
-  });
+  // Use 'ghost' variant to avoid shadcn background conflicts with glass styling
+  const shadcnVariant = 'ghost';
+  const glassClass =
+    variant === 'secondary' ? 'glass-button-secondary' : variant === 'danger' ? 'glass-button-danger' : 'glass-button';
 
   return (
-    <button
-      class={`glass-button ${variantClass} ${className} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-      {...hxAttrs}
-      {...(onclick && { onclick })}
+    <ShadcnButton
+      variant={shadcnVariant}
+      className={cn(glassClass, className)}
       disabled={disabled}
       type={type}
+      {...(onclick && { onclick })}
+      {...restProps}
     >
       {children}
-    </button>
+    </ShadcnButton>
   );
 };
 
