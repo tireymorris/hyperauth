@@ -1,5 +1,5 @@
 import type { FC } from 'hono/jsx';
-import { cva, type VariantProps } from 'class-variance-authority';
+import { type VariantProps, cva } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
 const toastVariants = cva(
