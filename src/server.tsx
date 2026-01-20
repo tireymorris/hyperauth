@@ -12,6 +12,7 @@ import { secureHeaders } from 'hono/secure-headers';
 import { HTTP_STATUS } from '@/utils/constants';
 import Layout from '@/components/Layout';
 import Button from '@/components/Button';
+import { Button as ShadcnButton } from '@/components/ui/button';
 import { verifyToken } from '@/lib/auth/tokens';
 
 const app = new Hono();
@@ -39,6 +40,24 @@ app.use('/images/*', serveStatic({ root: './public' }));
 app.use('/favicon.png', serveStatic({ path: './public/favicon.png' }));
 
 app.route('/', authRouter);
+
+app.get('/test-shadcn', async (c) => {
+  return c.html(
+    <Layout title="Test shadcn" c={c}>
+      <div class="space-y-4">
+        <h1 class="text-xl font-semibold">shadcn/ui Button Test</h1>
+        <div class="space-y-2">
+          <ShadcnButton>Default Button</ShadcnButton>
+          <ShadcnButton variant="secondary">Secondary</ShadcnButton>
+          <ShadcnButton variant="destructive">Destructive</ShadcnButton>
+          <ShadcnButton variant="outline">Outline</ShadcnButton>
+          <ShadcnButton variant="ghost">Ghost</ShadcnButton>
+          <ShadcnButton variant="link">Link</ShadcnButton>
+        </div>
+      </div>
+    </Layout>
+  );
+});
 
 app.get('/', async (c) => {
   const accessToken = getCookie(c, 'access_token');

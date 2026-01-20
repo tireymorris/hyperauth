@@ -15,7 +15,7 @@
       ],
       "test_spec": "Integration test guidance: 1) Start the application server, 2) Navigate to the main page (http://localhost:3000 or configured port), 3) Assert that the page loads without console errors related to styling, 4) Verify that elements with migrated classes (e.g., button with 'bg-blue-500' instead of 'glass-button') render correctly by checking computed styles or visibility, 5) Assert that no UnoCSS-related assets are loaded.",
       "priority": 1,
-      "passes": false,
+      "passes": true,
       "retry_count": 0
     },
     {
