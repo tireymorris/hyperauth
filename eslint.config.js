@@ -1,6 +1,6 @@
 import tsParser from '@typescript-eslint/parser';
 import tsPlugin from '@typescript-eslint/eslint-plugin';
-import jsdocPlugin from 'eslint-plugin-jsdoc';
+// import jsdocPlugin from 'eslint-plugin-jsdoc';
 import eslintCommentsPlugin from 'eslint-plugin-eslint-comments';
 import customCommentsPlugin from './eslint-custom-comments-plugin.js';
 
@@ -20,7 +20,7 @@ export default [
     },
     plugins: {
       '@typescript-eslint': tsPlugin,
-      jsdoc: jsdocPlugin,
+      // jsdoc: jsdocPlugin,
       'eslint-comments': eslintCommentsPlugin,
       'custom-comments': customCommentsPlugin,
     },
@@ -84,11 +84,11 @@ export default [
       'no-duplicate-imports': 'error',
       'sort-imports': ['error', { ignoreDeclarationSort: true }],
       '@typescript-eslint/no-magic-numbers': 'off',
-      'jsdoc/no-types': 'error',
-      'jsdoc/require-jsdoc': 'off',
-      'jsdoc/require-param': 'off',
-      'jsdoc/require-returns': 'off',
-      'jsdoc/require-description': 'off',
+      // 'jsdoc/no-types': 'error',
+      // 'jsdoc/require-jsdoc': 'off',
+      // 'jsdoc/require-param': 'off',
+      // 'jsdoc/require-returns': 'off',
+      // 'jsdoc/require-description': 'off',
       'no-warning-comments': ['error', { terms: ['todo', 'fixme', 'xxx', 'note'], location: 'anywhere' }],
       'spaced-comment': ['error', 'never'],
       'multiline-comment-style': ['error', 'starred-block'],

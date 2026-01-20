@@ -1,5 +1,5 @@
+import { type VariantProps, cva } from 'class-variance-authority';
 import type { FC } from 'hono/jsx';
-import { cva, type VariantProps } from 'class-variance-authority';
 
 import { cn } from '@/lib/utils';
 
@@ -31,11 +31,11 @@ const buttonVariants = cva(
 
 export interface ButtonProps extends VariantProps<typeof buttonVariants> {
   className?: string;
-  children?: any;
+  children?: unknown;
   disabled?: boolean;
   type?: 'button' | 'submit' | 'reset';
   onclick?: string;
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 const Button: FC<ButtonProps> = ({ className, variant, size, children, ...props }) => {
