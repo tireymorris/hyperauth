@@ -1,71 +1,44 @@
 import type { FC } from 'hono/jsx';
+import { cva, type VariantProps } from 'class-variance-authority';
+import { cn } from '@/lib/utils';
 
-type ToastProps = {
-  type: 'info' | 'success' | 'warning' | 'error';
-  message: string;
-};
+const toastVariants = cva(
+  'group pointer-events-auto relative flex w-full items-center justify-between space-x-4 overflow-hidden rounded-md border p-6 pr-8 shadow-lg transition-all data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none data-[state=open]:animate-in data-[state=closed]:animate-out data-[swipe=end]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-top-full data-[state=open]:sm:slide-in-from-bottom-full',
+  {
+    variants: {
+      variant: {
+        default: 'border bg-background text-foreground',
+        destructive: 'destructive group border-destructive bg-destructive text-destructive-foreground',
+      },
+    },
+    defaultVariants: {
+      variant: 'default',
+    },
+  }
+);
 
-const Toast: FC<ToastProps> = ({ type, message }) => {
-  const config = {
-    info: {
-      bg: 'rgba(6, 182, 212, 0.1)',
-      border: 'rgba(6, 182, 212, 0.3)',
-      text: '#22d3ee',
-      icon: (
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="1.5"
-            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-      ),
-    },
-    success: {
-      bg: 'rgba(16, 185, 129, 0.1)',
-      border: 'rgba(16, 185, 129, 0.3)',
-      text: '#34d399',
-      icon: (
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 13l4 4L19 7" />
-        </svg>
-      ),
-    },
-    warning: {
-      bg: 'rgba(245, 158, 11, 0.1)',
-      border: 'rgba(245, 158, 11, 0.3)',
-      text: '#fbbf24',
-      icon: (
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="1.5"
-            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-          />
-        </svg>
-      ),
-    },
-    error: {
-      bg: 'rgba(244, 63, 94, 0.1)',
-      border: 'rgba(244, 63, 94, 0.3)',
-      text: '#fb7185',
-      icon: (
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      ),
-    },
-  }[type];
+export interface ToastProps extends VariantProps<typeof toastVariants> {
+  title?: string;
+  description?: string;
+  className?: string;
+}
 
+const Toast: FC<ToastProps> = ({ title, description, variant, className }) => {
   return (
-    <div
-      class="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 px-4 py-3 rounded-xl backdrop-blur-xl"
-      style={`background: ${config.bg}; border: 1px solid ${config.border}; color: ${config.text};`}
-    >
-      {config.icon}
-      <span class="text-sm font-medium">{message}</span>
+    <div className={cn(toastVariants({ variant }), className)} role="alert" aria-live="assertive" aria-atomic="true">
+      <div className="grid gap-1">
+        {title && <div className="text-sm font-semibold">{title}</div>}
+        {description && <div className="text-sm opacity-90">{description}</div>}
+      </div>
+      <button
+        className="absolute right-2 top-2 rounded-md p-1 text-foreground/50 opacity-0 transition-opacity hover:text-foreground focus:opacity-100 focus:outline-none focus:ring-2 group-hover:opacity-100 group-[.destructive]:text-red-300 group-[.destructive]:hover:text-red-50 group-[.destructive]:focus:ring-red-400 group-[.destructive]:focus:ring-offset-red-600"
+        aria-label="Close toast"
+        onclick="this.closest('[role=alert]').remove()"
+      >
+        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
     </div>
   );
 };

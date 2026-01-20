@@ -87,8 +87,8 @@ const Layout: FC<LayoutProps> = ({ title, children, c, spacing = 'lg', authentic
 
           {error ? (
             <Toast
-              type="error"
-              message={
+              variant="destructive"
+              description={
                 error === 'invalid_token' || error === 'tampered_token'
                   ? 'Your verification link is invalid or has expired. Please request a new one.'
                   : error === 'expired_token'
@@ -101,9 +101,9 @@ const Layout: FC<LayoutProps> = ({ title, children, c, spacing = 'lg', authentic
               }
             />
           ) : warningMessage ? (
-            <Toast type="warning" message={warningMessage} />
+            <Toast variant="default" description={warningMessage} />
           ) : successMessage ? (
-            <Toast type="success" message={successMessage} />
+            <Toast variant="default" description={successMessage} />
           ) : null}
 
           {showNav && (
