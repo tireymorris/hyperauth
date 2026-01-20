@@ -63,7 +63,7 @@ const Layout: FC<LayoutProps> = ({ title, children, c, spacing = 'lg', authentic
           <meta name="viewport" content="width=device-width, initial-scale=1" />
           <meta name="description" content="HyperAuth - Secure Authentication" />
           <title>{title || 'HyperAuth'}</title>
-          <link rel="icon" href="/favicon.png" type="image/x-icon" />
+          <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
           <link rel="stylesheet" href="/styles/tailwind.css" />
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />

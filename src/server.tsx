@@ -37,7 +37,7 @@ app.use('/assets/*', serveStatic({ root: './public' }));
 app.use('/styles/*', serveStatic({ root: './public' }));
 app.use('/js/*', serveStatic({ root: './public' }));
 app.use('/images/*', serveStatic({ root: './public' }));
-app.use('/favicon.png', serveStatic({ path: './public/favicon.png' }));
+app.use('/favicon.svg', serveStatic({ path: './public/favicon.svg' }));
 
 app.route('/', authRouter);
 

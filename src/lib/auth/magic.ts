@@ -130,7 +130,7 @@ export async function sendMagicLink(email: string): Promise<{ error: string | nu
               <div class="container">
                 <div class="wrapper">
                   <div class="logo">
-                    <img src="${host}/favicon.png" alt="${appName}" width="64" height="64" />
+                    <img src="${host}/favicon.svg" alt="${appName}" width="64" height="64" />
                   </div>
                   <div class="main-content">
                     <h1>Welcome to ${appName}!</h1>
@@ -351,7 +351,7 @@ export async function sendInvitationMagicLink(
               <div class="container">
                 <div class="wrapper">
                   <div class="logo">
-                    <img src="${host}/favicon.png" alt="${appName}" width="64" height="64" />
+                    <img src="${host}/favicon.svg" alt="${appName}" width="64" height="64" />
                   </div>
                   <div class="main-content">
                     <h1>You're invited to join ${organizationName || 'the team'}!</h1>
