@@ -34,7 +34,6 @@ const Button: FC<ButtonProps> = (props) => {
     ...restProps
   } = props;
 
-  // Use 'ghost' variant to avoid shadcn background conflicts with glass styling
   const shadcnVariant = 'ghost';
   const glassClass =
     variant === 'secondary' ? 'glass-button-secondary' : variant === 'danger' ? 'glass-button-danger' : 'glass-button';
