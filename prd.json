@@ -47,7 +47,7 @@
       ],
       "test_spec": "Integration test guidance: 1) Start the application server, 2) Navigate to pages using Button (e.g., auth routes), 3) Assert primary Button variant renders with correct styling (e.g., element with class 'button' has expected background color), 4) Click a Button and verify onclick or hx-post triggers expected behavior, 5) Test secondary and danger variants by asserting their unique styles, 6) Confirm previous stories: Tailwind migration (no styling errors) and shadcn setup (components load) still work.",
       "priority": 2,
-      "passes": false,
+      "passes": true,
       "retry_count": 0
     },
     {
@@ -64,7 +64,7 @@
       "test_spec": "Integration test guidance: 1) Start the application server, 2) Navigate to auth forms or pages with Input fields, 3) Assert Input elements render with correct styling (e.g., element with name 'email' has class 'input'), 4) Type text into an Input and assert value updates, 5) Test required validation by submitting form without input and checking error display, 6) Verify disabled state by asserting cursor-not-allowed style, 7) Confirm cumulative: Button replacement works, and previous styling/setup tests pass.",
       "priority": 2,
       "passes": false,
-      "retry_count": 0
+      "retry_count": 2
     },
     {
       "id": "story-5",

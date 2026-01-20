@@ -11,7 +11,7 @@ import { getAuthProvider } from '@/lib/providers';
 import { z } from 'zod';
 import { type Context, Hono } from 'hono';
 import Layout from '@/components/Layout';
-import Input from '@/components/Input';
+import { Input } from '@/components/ui/input';
 import Button from '@/components/Button';
 import { HTTP_STATUS } from '@/utils/constants';
 
