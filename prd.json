@@ -1,0 +1,90 @@
+{
+  "project_name": "HyperAuth Cleanup",
+  "branch_name": "feature/cleanup-unused-files",
+  "stories": [
+    {
+      "id": "remove-unused-iconbutton",
+      "title": "Remove unused IconButton component",
+      "description": "The IconButton component file and its exported variants (FullscreenButton, CloseButton, DashboardCloseButton) are not imported or used anywhere in the codebase, based on comprehensive search across all TypeScript and TSX files.",
+      "acceptance_criteria": [
+        "IconButton.tsx file is deleted from src/components/",
+        "No references to IconButton remain in the codebase",
+        "Build and lint commands pass without errors"
+      ],
+      "test_spec": "Test guidance: 1) Run 'bun run build' to ensure the application compiles successfully without the IconButton component, 2) Run 'bun run lint' to verify no linting errors related to missing imports or unused code, 3) Run 'bun run typecheck' to confirm TypeScript compilation succeeds without the removed component.",
+      "priority": 1,
+      "passes": false,
+      "retry_count": 0
+    },
+    {
+      "id": "remove-unused-uno-css",
+      "title": "Remove unused UnoCSS stylesheet",
+      "description": "The project has migrated from UnoCSS to Tailwind CSS, but the old uno.css file remains in public/styles/ and is not referenced anywhere in the HTML or build process.",
+      "acceptance_criteria": [
+        "public/styles/uno.css file is deleted",
+        "No references to uno.css remain in the codebase",
+        "Tailwind CSS still loads correctly"
+      ],
+      "test_spec": "Test guidance: 1) Start the development server with 'bun dev', 2) Navigate to the login page and verify all styling (glass-card, glass-button, glass-input) renders correctly with Tailwind CSS, 3) Check browser network tab to confirm only tailwind.css is loaded, not uno.css.",
+      "priority": 2,
+      "passes": false,
+      "retry_count": 0
+    },
+    {
+      "id": "remove-migration-e2e-tests",
+      "title": "Remove migration-related E2E tests",
+      "description": "Several E2E test files were created for verifying component replacements and styling migration (button-component-replacement.spec.ts, input-component-replacement.spec.ts, input-shadcn-replacement.spec.ts, layout-navigation-shadcn.spec.ts, test-shadcn-setup.spec.ts, verify-styling-migration.spec.ts) and are no longer needed for ongoing development.",
+      "acceptance_criteria": [
+        "All 6 migration test files are deleted from e2e/ directory",
+        "Main auth.spec.ts test remains intact",
+        "E2E test suite still runs successfully"
+      ],
+      "test_spec": "Test guidance: 1) Run 'bun run test:e2e' to execute the remaining E2E tests, 2) Verify that auth.spec.ts and other core tests pass, 3) Confirm the test run completes without attempting to run the deleted migration tests.",
+      "priority": 3,
+      "passes": false,
+      "retry_count": 0
+    },
+    {
+      "id": "remove-test-shadcn-route",
+      "title": "Remove test shadcn route from server",
+      "description": "The /test-shadcn route in server.tsx was added for testing shadcn/ui setup and button variants but is not part of the production application flow.",
+      "acceptance_criteria": [
+        "/test-shadcn route is removed from server.tsx",
+        "Application still starts and serves login/home pages correctly",
+        "No broken links or references to the removed route"
+      ],
+      "test_spec": "Test guidance: 1) Start the server with 'bun run server', 2) Verify the login page loads at root path, 3) Attempt to navigate to /test-shadcn and confirm it returns a 404 not found page, 4) Complete a full authentication flow to ensure core functionality remains intact.",
+      "priority": 4,
+      "passes": false,
+      "retry_count": 0
+    },
+    {
+      "id": "update-readme-styling",
+      "title": "Update README to reflect Tailwind CSS usage",
+      "description": "The README.md incorrectly states 'UnoCSS' as the styling framework, but the project actually uses Tailwind CSS as evidenced by package.json dependencies and build scripts.",
+      "acceptance_criteria": [
+        "README.md 'Styling' section updated from 'UnoCSS' to 'Tailwind CSS'",
+        "No other inaccurate information in README",
+        "README accurately reflects current tech stack"
+      ],
+      "test_spec": "Test guidance: 1) Read the updated README.md file to verify the styling section now mentions 'Tailwind CSS', 2) Confirm package.json contains tailwindcss dependency and build scripts reference tailwindcss, 3) Verify the build process still works with 'bun run build:css'.",
+      "priority": 5,
+      "passes": false,
+      "retry_count": 0
+    },
+    {
+      "id": "remove-unused-email-functions",
+      "title": "Remove unused email utility functions",
+      "description": "In src/utils/email.ts, the functions getEmailDomain and getEmailUsername are defined but not used anywhere in the codebase, while normalizeEmail is used in auth flows.",
+      "acceptance_criteria": [
+        "getEmailDomain and getEmailUsername functions removed from src/utils/email.ts",
+        "normalizeEmail function remains intact",
+        "No references to removed functions remain"
+      ],
+      "test_spec": "Test guidance: 1) Run 'bun run typecheck' to ensure no TypeScript errors from removed functions, 2) Run unit tests with 'bun run test:unit' to verify auth-related email normalization still works, 3) Perform an authentication flow to confirm email processing functions correctly.",
+      "priority": 6,
+      "passes": false,
+      "retry_count": 0
+    }
+  ]
+}

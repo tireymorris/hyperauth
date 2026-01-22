@@ -62,7 +62,6 @@ test.describe('Feature: Layout and Navigation shadcn Migration', () => {
     });
 
     test('should render icon buttons correctly when used', async ({ page }) => {
-      // Since IconButton is used in various places, test a page that might use it
       // For now, test that the styling is applied correctly on pages with buttons
 
       await page.goto('/login');
