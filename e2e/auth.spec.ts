@@ -7,7 +7,7 @@ test.describe('Feature: Login Page', () => {
       await page.goto('/login');
 
       // Then I should see the welcome message
-      await expect(page.getByText('Welcome to HyperAuth')).toBeVisible();
+      await expect(page.getByText('Welcome back')).toBeVisible();
 
       // And I should see the email input field
       const emailInput = page.getByLabel('Email address');
@@ -16,10 +16,10 @@ test.describe('Feature: Login Page', () => {
       await expect(emailInput).toHaveAttribute('required', '');
 
       // And I should see the submit button
-      await expect(page.getByRole('button', { name: 'Send login link' })).toBeVisible();
+      await expect(page.getByRole('button', { name: 'Continue with email' })).toBeVisible();
 
       // And I should see the security message
-      await expect(page.getByText('Your data is encrypted and secure')).toBeVisible();
+      await expect(page.getByText('End-to-end encrypted')).toBeVisible();
     });
 
     test('should have proper page title', async ({ page }) => {
@@ -46,7 +46,7 @@ test.describe('Feature: Login Page', () => {
       await page.getByLabel('Email address').fill('test@example.com');
 
       // And I click the submit button
-      await page.getByRole('button', { name: 'Send login link' }).click();
+      await page.getByRole('button', { name: 'Continue with email' }).click();
 
       // Then I should see the development mode message
       await expect(page.getByText('Development mode')).toBeVisible();
@@ -65,16 +65,14 @@ test.describe('Feature: Login Page', () => {
       await emailInput.fill('not-an-email');
 
       // And I click the submit button
-      await page.getByRole('button', { name: 'Send login link' }).click();
+      await page.getByRole('button', { name: 'Continue with email' }).click();
 
       // Then the form should not submit (HTML5 validation)
       // The browser prevents invalid email submission
       await expect(page).toHaveURL('/login');
 
       // And the email input should have validation error state
-      const isInvalid = await emailInput.evaluate(
-        (el: HTMLInputElement) => !el.validity.valid
-      );
+      const isInvalid = await emailInput.evaluate((el: HTMLInputElement) => !el.validity.valid);
       expect(isInvalid).toBe(true);
     });
 
@@ -86,7 +84,7 @@ test.describe('Feature: Login Page', () => {
       await page.getByLabel('Email address').fill('TEST@EXAMPLE.COM');
 
       // And I click the submit button
-      await page.getByRole('button', { name: 'Send login link' }).click();
+      await page.getByRole('button', { name: 'Continue with email' }).click();
 
       // Then I should see the development mode message (email was accepted)
       await expect(page.getByText('Development mode')).toBeVisible();
@@ -100,7 +98,7 @@ test.describe('Feature: Login Page', () => {
       await page.getByLabel('Email address').fill('user+tag@gmail.com');
 
       // And I click the submit button
-      await page.getByRole('button', { name: 'Send login link' }).click();
+      await page.getByRole('button', { name: 'Continue with email' }).click();
 
       // Then I should see the development mode message
       await expect(page.getByText('Development mode')).toBeVisible();
@@ -112,14 +110,14 @@ test.describe('Feature: Login Page', () => {
       // Given I submitted an email and see the development mode message
       await page.goto('/login');
       await page.getByLabel('Email address').fill('test@example.com');
-      await page.getByRole('button', { name: 'Send login link' }).click();
+      await page.getByRole('button', { name: 'Continue with email' }).click();
       await expect(page.getByText('Development mode')).toBeVisible();
 
       // When I click the back to login button
       await page.getByRole('button', { name: 'Back to login' }).click();
 
       // Then I should be back on the login page
-      await expect(page.getByText('Welcome to HyperAuth')).toBeVisible();
+      await expect(page.getByText('Welcome back')).toBeVisible();
       await expect(page.getByLabel('Email address')).toBeVisible();
     });
   });
@@ -131,7 +129,7 @@ test.describe('Feature: Magic Link Verification', () => {
       // Given I have requested a magic link
       await page.goto('/login');
       await page.getByLabel('Email address').fill('verify@example.com');
-      await page.getByRole('button', { name: 'Send login link' }).click();
+      await page.getByRole('button', { name: 'Continue with email' }).click();
 
       // Extract token from console (in dev mode it's logged)
       // For testing, we'll get it from the page context
@@ -143,7 +141,7 @@ test.describe('Feature: Magic Link Verification', () => {
       // Navigate back and submit again to capture the token
       await page.goto('/login');
       await page.getByLabel('Email address').fill('verify@example.com');
-      await page.getByRole('button', { name: 'Send login link' }).click();
+      await page.getByRole('button', { name: 'Continue with email' }).click();
       await expect(page.getByText('Development mode')).toBeVisible();
 
       // The magic link is in server logs, not browser console
@@ -195,9 +193,7 @@ test.describe('Feature: Magic Link Verification', () => {
       await page.goto('/login?error=invalid_token');
 
       // Then I should see the error toast
-      await expect(
-        page.getByText('Your verification link is invalid or has expired')
-      ).toBeVisible();
+      await expect(page.getByText('Your verification link is invalid or has expired')).toBeVisible();
     });
 
     test('should show appropriate error message for expired token', async ({ page }) => {
@@ -213,9 +209,7 @@ test.describe('Feature: Magic Link Verification', () => {
       await page.goto('/login?error=token_revoked');
 
       // Then I should see the revoked error toast
-      await expect(
-        page.getByText('This verification link has already been used')
-      ).toBeVisible();
+      await expect(page.getByText('This verification link has already been used')).toBeVisible();
     });
   });
 });
@@ -228,7 +222,7 @@ test.describe('Feature: Logout', () => {
 
       // Then I should be redirected to the login page
       await expect(page).toHaveURL('/login');
-      await expect(page.getByText('Welcome to HyperAuth')).toBeVisible();
+      await expect(page.getByText('Welcome back')).toBeVisible();
     });
 
     test('should clear cookies on logout', async ({ page, context }) => {
@@ -394,7 +388,7 @@ test.describe('Feature: Accessibility', () => {
 
       // Verify the submit button is focusable via Tab
       await page.keyboard.press('Tab');
-      const submitButton = page.getByRole('button', { name: 'Send login link' });
+      const submitButton = page.getByRole('button', { name: 'Continue with email' });
       await expect(submitButton).toBeFocused();
 
       // Verify we can navigate back to input
