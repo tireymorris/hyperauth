@@ -26,16 +26,16 @@ bun dev
 
 ## Environment Variables
 
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `SECRET_KEY` | Yes | JWT signing key (min 32 characters) |
-| `HOST` | Yes | Full URL (e.g., `http://localhost:3000`) |
-| `EMAIL_FROM` | Yes | Sender email address |
-| `NODE_ENV` | Yes | `development`, `test`, or `production` |
-| `PORT` | No | Server port (default: 3000) |
-| `APP_NAME` | No | Application name (default: HyperAuth) |
-| `RESEND_API_KEY` | No | Resend API key for sending emails |
-| `SKIP_AUTH` | No | Skip auth for testing (default: false) |
+| Variable         | Required | Description                              |
+| ---------------- | -------- | ---------------------------------------- |
+| `SECRET_KEY`     | Yes      | JWT signing key (min 32 characters)      |
+| `HOST`           | Yes      | Full URL (e.g., `http://localhost:3000`) |
+| `EMAIL_FROM`     | Yes      | Sender email address                     |
+| `NODE_ENV`       | Yes      | `development`, `test`, or `production`   |
+| `PORT`           | No       | Server port (default: 3000)              |
+| `APP_NAME`       | No       | Application name (default: HyperAuth)    |
+| `RESEND_API_KEY` | No       | Resend API key for sending emails        |
+| `SKIP_AUTH`      | No       | Skip auth for testing (default: false)   |
 
 ## Scripts
 
@@ -59,20 +59,20 @@ bun run precommit    # Run all checks
 
 ## API Endpoints
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/login` | GET | Login page |
-| `/auth/login` | POST | Request magic link |
-| `/auth/verify` | GET | Verify magic link token |
-| `/auth/refresh` | GET/POST | Refresh access token |
-| `/auth/logout` | GET | Logout and clear cookies |
+| Endpoint        | Method   | Description              |
+| --------------- | -------- | ------------------------ |
+| `/login`        | GET      | Login page               |
+| `/auth/login`   | POST     | Request magic link       |
+| `/auth/verify`  | GET      | Verify magic link token  |
+| `/auth/refresh` | GET/POST | Refresh access token     |
+| `/auth/logout`  | GET      | Logout and clear cookies |
 
 ## Tech Stack
 
 - **Runtime**: [Bun](https://bun.sh)
 - **Framework**: [Hono](https://hono.dev)
 - **Database**: SQLite (via `bun:sqlite`)
-- **Styling**: [UnoCSS](https://unocss.dev)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com)
 - **Email**: [Resend](https://resend.com)
 - **JWT**: [jose](https://github.com/panva/jose)
 
