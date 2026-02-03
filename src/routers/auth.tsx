@@ -1,13 +1,11 @@
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
-import { COOKIE_CONFIG, COOKIE_OPTIONS, ERROR_CODES, ERROR_CODE_MAP, TOKEN_EXPIRY_SECONDS } from '@/lib/auth/constants';
+import { COOKIE_CONFIG, COOKIE_OPTIONS, ERROR_CODES, ERROR_CODE_MAP } from '@/lib/auth/constants';
 import { blacklistToken, generateCsrfToken, generateToken, verifyToken } from '@/lib/auth/tokens';
-import { sendMagicLink, validateMagicLink } from '@/lib/auth/magic';
+import { generateMagicLink, validateMagicLink } from '@/lib/auth/magic';
 
 import { contextLog, logHandler } from '@/middleware/logger';
-import { AUTH_RATE_LIMITS, rateLimiter } from '@/middleware/rate-limiter';
 import { env } from '@/utils/env';
-import { normalizeEmail } from '@/utils/email';
-import { getAuthProvider } from '@/lib/providers';
+
 import { z } from 'zod';
 import { type Context, Hono } from 'hono';
 import Layout from '@/components/Layout';
@@ -16,10 +14,6 @@ import Button from '@/components/Button';
 import { HTTP_STATUS } from '@/utils/constants';
 
 const authRouter = new Hono();
-
-authRouter.use('/auth/login', rateLimiter(AUTH_RATE_LIMITS.login));
-authRouter.use('/auth/verify', rateLimiter(AUTH_RATE_LIMITS.verify));
-authRouter.use('/auth/refresh', rateLimiter(AUTH_RATE_LIMITS.refresh));
 
 authRouter.get('/auth/logout', async (c: Context) => {
   const accessToken = getCookie(c, COOKIE_CONFIG.access.name);
@@ -41,11 +35,7 @@ authRouter.get('/auth/logout', async (c: Context) => {
 
   const redirectUrl = emailChanged && message ? `/login?success=${encodeURIComponent(message)}` : '/login';
 
-  if (c.req.header('HX-Request')) {
-    c.header('HX-Redirect', redirectUrl);
-    logHandler.debug('auth', 'User logged out', { emailChanged: !!emailChanged });
-    return c.body(null);
-  }
+  logHandler.debug('auth', 'User logged out', { emailChanged: !!emailChanged });
   return c.redirect(redirectUrl);
 });
 
@@ -100,7 +90,7 @@ authRouter.get('/login', async (c) => {
 authRouter.post('/auth/login', async (c) => {
   const formData = await c.req.parseBody();
   const rawEmail = formData['email']?.toString();
-  const email = rawEmail ? normalizeEmail(rawEmail) : '';
+  const email = rawEmail ? rawEmail.trim().toLowerCase() : '';
   const csrfToken = formData['csrf']?.toString();
 
   if (!csrfToken) {
@@ -135,9 +125,11 @@ authRouter.post('/auth/login', async (c) => {
             <h2 class="text-xl font-semibold text-slate-100">Invalid email format</h2>
             <p class="mt-2 text-sm text-slate-400">Please enter a valid email address to continue.</p>
           </div>
-          <Button hx-get="/login" hx-target="body" hx-swap="outerHTML" variant="secondary" className="w-full">
-            Try again
-          </Button>
+          <a href="/login">
+            <Button variant="secondary" className="w-full">
+              Try again
+            </Button>
+          </a>
         </div>
       </Layout>
     );
@@ -146,14 +138,39 @@ authRouter.post('/auth/login', async (c) => {
   try {
     logHandler.info('user', 'Processing magic link request', { email });
 
-    if (env('NODE_ENV') === 'development') {
-      const authProvider = await getAuthProvider();
-      const token = await generateToken({ type: 'magic', email, role: 'user' });
-      await authProvider.storeToken(token, email, TOKEN_EXPIRY_SECONDS.magic);
-      logHandler.info('token', 'Magic link token stored', { email });
+    const result = await generateMagicLink(email);
+    if (result.error) {
+      logHandler.error('auth', 'Failed to generate magic link', { error: result.error });
+      c.status(HTTP_STATUS.INTERNAL_SERVER_ERROR);
+      return c.html(
+        <Layout title="Error Generating Link" c={c}>
+          <div class="text-center space-y-6">
+            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-rose-500/10 border border-rose-500/20">
+              <svg class="w-7 h-7 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </div>
+            <div>
+              <h2 class="text-xl font-semibold text-slate-100">Unable to generate link</h2>
+              <p class="mt-2 text-sm text-slate-400">
+                There was an issue generating the login link. Please try again later.
+              </p>
+            </div>
+            <a href="/login">
+              <Button variant="secondary" className="w-full">
+                Try again
+              </Button>
+            </a>
+          </div>
+        </Layout>
+      );
+    }
 
+    logHandler.info('auth', 'Magic link generated successfully', { email });
+
+    if (env('NODE_ENV') === 'development' && result.token) {
       const host = env('HOST');
-      const magicLink = `${host}/auth/verify?token=${token}`;
+      const magicLink = `${host}/auth/verify?token=${result.token}`;
       logHandler.info('auth', 'Development magic link', { magicLink });
 
       c.status(HTTP_STATUS.OK);
@@ -172,43 +189,23 @@ authRouter.post('/auth/login', async (c) => {
             </div>
             <div>
               <h2 class="text-xl font-semibold text-slate-100">Development mode</h2>
-              <p class="mt-2 text-sm text-slate-400">Check the console for the magic link URL.</p>
+              <p class="mt-2 text-sm text-slate-400">Use this magic link to sign in:</p>
             </div>
-            <Button hx-get="/login" hx-target="body" hx-swap="outerHTML" variant="secondary" className="w-full">
-              Back to login
-            </Button>
+            <div class="bg-slate-800/50 rounded-lg p-4 border border-white/10">
+              <a href={magicLink} class="text-sm text-cyan-400 hover:text-cyan-300 break-all font-mono">
+                {magicLink}
+              </a>
+            </div>
+            <a href="/login">
+              <Button variant="secondary" className="w-full">
+                Back to login
+              </Button>
+            </a>
           </div>
         </Layout>
       );
     }
 
-    const result = await sendMagicLink(email);
-    if (result.error) {
-      logHandler.error('auth', 'Failed to send magic link', { error: result.error });
-      c.status(HTTP_STATUS.INTERNAL_SERVER_ERROR);
-      return c.html(
-        <Layout title="Error Sending Link" c={c}>
-          <div class="text-center space-y-6">
-            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-rose-500/10 border border-rose-500/20">
-              <svg class="w-7 h-7 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </div>
-            <div>
-              <h2 class="text-xl font-semibold text-slate-100">Unable to send link</h2>
-              <p class="mt-2 text-sm text-slate-400">
-                There was an issue sending the login link. Please try again later.
-              </p>
-            </div>
-            <Button hx-get="/login" hx-target="body" hx-swap="outerHTML" variant="secondary" className="w-full">
-              Try again
-            </Button>
-          </div>
-        </Layout>
-      );
-    }
-
-    logHandler.info('auth', 'Magic link process completed', { email });
     c.status(HTTP_STATUS.OK);
     return c.html(
       <Layout title="Check Your Email" c={c}>
@@ -252,9 +249,11 @@ authRouter.post('/auth/login', async (c) => {
             <h2 class="text-xl font-semibold text-slate-100">Something went wrong</h2>
             <p class="mt-2 text-sm text-slate-400">An unexpected error occurred. Please try again later.</p>
           </div>
-          <Button hx-get="/login" hx-target="body" hx-swap="outerHTML" variant="secondary" className="w-full">
-            Try again
-          </Button>
+          <a href="/login">
+            <Button variant="secondary" className="w-full">
+              Try again
+            </Button>
+          </a>
         </div>
       </Layout>
     );

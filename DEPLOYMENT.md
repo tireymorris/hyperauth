@@ -1,30 +1,27 @@
 # Deployment Guide
 
-This guide covers deploying HyperAuth to Fly.io.
+This guide covers deploying HyperAuth.
 
 ## Prerequisites
 
-- [Fly CLI](https://fly.io/docs/hands-on/install-flyctl/) installed
-- Fly.io account
-- [Resend](https://resend.com) API key (for production email)
+- [Fly CLI](https://fly.io/docs/hands-on/install-flyctl/) installed (for Fly.io deployment)
+- Fly.io account (or Docker for local/self-hosted deployment)
 
 ## Environment Variables
 
 ### Required
 
-| Variable | Description |
-|----------|-------------|
+| Variable     | Description                         |
+| ------------ | ----------------------------------- |
 | `SECRET_KEY` | JWT signing key (min 32 characters) |
-| `HOST` | Full production URL |
-| `EMAIL_FROM` | Verified sender email |
-| `NODE_ENV` | Set to `production` |
-| `RESEND_API_KEY` | Resend API key |
+| `HOST`       | Full production URL                 |
+| `NODE_ENV`   | Set to `production`                 |
 
 ### Optional
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `PORT` | 3000 | Server port |
+| Variable   | Default   | Description      |
+| ---------- | --------- | ---------------- |
+| `PORT`     | 3000      | Server port      |
 | `APP_NAME` | HyperAuth | Application name |
 
 ## Deploy to Fly.io
@@ -40,8 +37,6 @@ fly apps create hyperauth
 ```bash
 fly secrets set SECRET_KEY="your-secret-key-at-least-32-chars"
 fly secrets set HOST="https://hyperauth.fly.dev"
-fly secrets set EMAIL_FROM="auth@yourdomain.com"
-fly secrets set RESEND_API_KEY="re_your_api_key"
 fly secrets set NODE_ENV="production"
 ```
 
@@ -67,9 +62,33 @@ docker build -t hyperauth .
 docker run -p 3000:3000 \
   -e SECRET_KEY="your-secret-key-at-least-32-chars" \
   -e HOST="http://localhost:3000" \
-  -e EMAIL_FROM="auth@localhost" \
   -e NODE_ENV="development" \
   hyperauth
+```
+
+## Email Integration
+
+HyperAuth generates magic link tokens but does not send emails. You must implement email delivery in your application:
+
+1. Override the `/auth/login` endpoint or use the library programmatically
+2. Call `generateMagicLink(email)` to get a token
+3. Send the token via your preferred email provider (SendGrid, AWS SES, Postmark, etc.)
+
+Example:
+
+```typescript
+import { generateMagicLink } from '@/lib/auth/magic';
+
+// In your login handler
+const { token, error } = await generateMagicLink(email);
+if (token) {
+  // Send email using your provider
+  await sendEmail({
+    to: email,
+    subject: 'Your login link',
+    body: `Click here to login: ${host}/auth/verify?token=${token}`,
+  });
+}
 ```
 
 ## Persistent Storage

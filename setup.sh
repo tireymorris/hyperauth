@@ -97,12 +97,8 @@ mkdir -p public/styles || handle_error "Failed to create public/styles directory
 
 # Final summary
 echo ""
-echo "✅ Setup complete! Here are some useful commands:"
-echo "  • bun dev              - Start the development server"
-echo "  • bun run typecheck       - Type check the application"
-echo "  • bun run lint            - Lint the code"
-echo "  • bun run prettier        - Format the code"
-echo "  • bun run test:unit       - Run unit tests"
-echo "  • bun precommit        - Run all pre-commit checks"
+echo "✅ Setup complete!"
 echo ""
-echo "Happy coding! 🚀"
+echo "Starting development server..."
+echo ""
+bun dev

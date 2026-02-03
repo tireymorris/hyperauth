@@ -17,7 +17,6 @@ import { verifyToken } from '@/lib/auth/tokens';
 const app = new Hono();
 logHandler.info('http', 'Initializing server', {
   environment: env('NODE_ENV'),
-  skipAuth: env('SKIP_AUTH') === 'true',
 });
 
 app.use('*', logging());

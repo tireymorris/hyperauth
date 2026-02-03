@@ -6,13 +6,10 @@ const DEFAULT_HTTP_PORT = 3000;
 
 const envSchema = z.object({
   APP_NAME: z.string().default('HyperAuth'),
-  EMAIL_FROM: z.string(),
   HOST: z.string(),
   NODE_ENV: z.enum(['development', 'test', 'production']),
   PORT: z.coerce.number().default(DEFAULT_HTTP_PORT),
-  RESEND_API_KEY: z.string().optional(),
   SECRET_KEY: z.string().min(DEFAULT_SECRET_KEY_LENGTH),
-  SKIP_AUTH: z.string().default('false'),
 });
 
 type EnvKey = keyof z.infer<typeof envSchema>;

@@ -6,7 +6,6 @@ import Toast from '@/components/Toast';
 import { getUserFromContext } from '@/lib/auth/session';
 import { logHandler } from '@/middleware/logger';
 import { raw } from 'hono/html';
-import { createRawInlineScript } from '@/utils/script-loader';
 
 type LayoutProps = {
   title: string;
@@ -28,24 +27,16 @@ const Layout: FC<LayoutProps> = ({ title, children, c, spacing = 'lg', authentic
   const userEmail = currentUser?.email;
   const pathname = c.req.path || '/';
   const isAuthPage = pathname === '/auth';
-  const isLandingPage =
-    pathname === '/landing' || pathname === '/purchase' || pathname === '/demo' || pathname.startsWith('/purchase/');
-  const showNav = (!!currentUser || isLandingPage) && !isAuthPage;
+  const showNav = !!currentUser && !isAuthPage;
   const error = c.req.query('error');
-  const justLoggedIn = c.req.query('justLoggedIn');
   const successMessage = c.req.query('success');
   const warningMessage = c.req.query('warning');
-
-  const organizationId = c.get('organizationId');
-  const hasOrganization = Boolean(organizationId);
 
   logHandler.debug('ui', 'Rendering layout', {
     userEmail,
     error,
     successMessage,
     warningMessage,
-    justLoggedIn,
-    hasOrganization,
   });
 
   const spacingClasses = {
@@ -57,7 +48,7 @@ const Layout: FC<LayoutProps> = ({ title, children, c, spacing = 'lg', authentic
   return (
     <>
       {raw('<!DOCTYPE html>')}
-      <html lang="en" hx-boost="true">
+      <html lang="en">
         <head>
           <meta charSet="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -65,26 +56,8 @@ const Layout: FC<LayoutProps> = ({ title, children, c, spacing = 'lg', authentic
           <title>{title || 'HyperAuth'}</title>
           <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
           <link rel="stylesheet" href="/styles/tailwind.css" />
-          <link rel="preconnect" href="https://fonts.googleapis.com" />
-          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
-          <link
-            href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
-            rel="stylesheet"
-          />
-          {raw(`<script src="https://unpkg.com/htmx.org@1.9.10/dist/htmx.min.js"></script>`)}
-          {raw(`<script src="https://unpkg.com/htmx.org@1.9.10/dist/ext/class-tools.js"></script>`)}
-          {createRawInlineScript(
-            'htmx-config',
-            `htmx.config.globalViewTransitions = false; 
-             htmx.config.historyCacheSize = 10;
-             htmx.config.refreshOnHistoryMiss = true;`
-          )}
         </head>
-        <body class="flex min-h-screen w-full flex-col items-center justify-center p-4">
-          <div class="orb orb-1"></div>
-          <div class="orb orb-2"></div>
-          <div class="orb orb-3"></div>
-
+        <body class="flex min-h-screen w-full flex-col items-center justify-center p-4 bg-slate-950">
           {error ? (
             <Toast
               variant="destructive"
@@ -106,19 +79,13 @@ const Layout: FC<LayoutProps> = ({ title, children, c, spacing = 'lg', authentic
             <Toast variant="default" description={successMessage} />
           ) : null}
 
-          {showNav && (
-            <Navigation {...(userEmail && { userEmail })} currentPath={pathname} hasOrganization={hasOrganization} />
-          )}
+          {showNav && <Navigation {...(userEmail && { userEmail })} currentPath={pathname} />}
 
-          <main class="relative z-10 w-full max-w-md fade-in">
-            <div class="glass-card p-8">
+          <main class="relative z-10 w-full max-w-md">
+            <div class="bg-slate-900 border border-slate-800 rounded-lg p-8 shadow-xl">
               <div class={spacingClasses[spacing]}>{children}</div>
             </div>
           </main>
-
-          <div id="modal-container" class="fixed inset-0 z-[9000] hidden">
-            <div id="modal-content" class="hidden"></div>
-          </div>
         </body>
       </html>
     </>

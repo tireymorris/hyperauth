@@ -1,5 +1,4 @@
 import { logHandler } from '@/middleware/logger';
-import { normalizeEmail } from '@/utils/email';
 import { Database } from 'bun:sqlite';
 
 const CLEANUP_INTERVAL_MS = 5 * 60 * 1000;
@@ -79,7 +78,7 @@ class SQLiteAuthProvider implements AuthProvider {
   }
 
   async storeToken(token: string, email: string, expiresInSeconds: number): Promise<void> {
-    const normalizedEmail = normalizeEmail(email);
+    const normalizedEmail = email.trim().toLowerCase();
     const expiresAt = Date.now() + expiresInSeconds * 1000;
 
     this.db.run('INSERT OR REPLACE INTO tokens (token, email, expires_at) VALUES (?, ?, ?)', [
@@ -95,7 +94,7 @@ class SQLiteAuthProvider implements AuthProvider {
   }
 
   async validateToken(token: string, email: string): Promise<boolean> {
-    const normalizedEmail = normalizeEmail(email);
+    const normalizedEmail = email.trim().toLowerCase();
     const now = Date.now();
 
     const result = this.db.query('SELECT email, expires_at FROM tokens WHERE token = ?').get(token) as

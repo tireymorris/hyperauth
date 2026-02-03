@@ -1,10 +1,10 @@
 # HyperAuth
 
-A lightweight, secure authentication library built with Bun, Hono, and SQLite.
+A lightweight, secure, generic JWT authentication library built with Bun, Hono, and SQLite.
 
 ## Features
 
-- **Magic Link Authentication** - Passwordless login via email
+- **Magic Link Authentication** - Passwordless authentication flow
 - **JWT Tokens** - Secure access and refresh tokens with HS256 signing
 - **SQLite Storage** - Persistent token storage with automatic cleanup
 - **Rate Limiting** - Built-in protection against brute force attacks
@@ -26,24 +26,21 @@ bun dev
 
 ## Environment Variables
 
-| Variable         | Required | Description                              |
-| ---------------- | -------- | ---------------------------------------- |
-| `SECRET_KEY`     | Yes      | JWT signing key (min 32 characters)      |
-| `HOST`           | Yes      | Full URL (e.g., `http://localhost:3000`) |
-| `EMAIL_FROM`     | Yes      | Sender email address                     |
-| `NODE_ENV`       | Yes      | `development`, `test`, or `production`   |
-| `PORT`           | No       | Server port (default: 3000)              |
-| `APP_NAME`       | No       | Application name (default: HyperAuth)    |
-| `RESEND_API_KEY` | No       | Resend API key for sending emails        |
-| `SKIP_AUTH`      | No       | Skip auth for testing (default: false)   |
+| Variable     | Required | Description                              |
+| ------------ | -------- | ---------------------------------------- |
+| `SECRET_KEY` | Yes      | JWT signing key (min 32 characters)      |
+| `HOST`       | Yes      | Full URL (e.g., `http://localhost:3000`) |
+| `NODE_ENV`   | Yes      | `development`, `test`, or `production`   |
+| `PORT`       | No       | Server port (default: 3000)              |
+| `APP_NAME`   | No       | Application name (default: HyperAuth)    |
 
 ## Scripts
 
 ```bash
-bun dev          # Start dev server with hot reload
-bun run server   # Start server with watch mode
+bun dev              # Start dev server with hot reload
+bun run server       # Start server with watch mode
 bun run test:unit    # Run tests
-bun run lint     # Lint code
+bun run lint         # Lint code
 bun run typecheck    # TypeScript check
 bun run precommit    # Run all checks
 ```
@@ -52,7 +49,7 @@ bun run precommit    # Run all checks
 
 1. User enters email on `/login`
 2. Server generates magic link token and stores in SQLite
-3. Email sent with magic link (or logged in development mode)
+3. Application developer implements email sending (in development, magic link is displayed in UI)
 4. User clicks link → `/auth/verify?token=...`
 5. Server validates token, issues access + refresh JWT cookies
 6. Magic token is blacklisted to prevent replay
@@ -73,7 +70,6 @@ bun run precommit    # Run all checks
 - **Framework**: [Hono](https://hono.dev)
 - **Database**: SQLite (via `bun:sqlite`)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com)
-- **Email**: [Resend](https://resend.com)
 - **JWT**: [jose](https://github.com/panva/jose)
 
 ## License
