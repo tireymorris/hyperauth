@@ -3,7 +3,10 @@ import type { Context } from 'hono';
 import type { TokenPayload } from '@/lib/auth/constants';
 import Navigation from '@/components/Navigation';
 import Toast from '@/components/Toast';
+import ToastRegion from '@/components/ToastRegion';
+import { messageForAuthQueryError } from '@/lib/auth/messages';
 import { getUserFromContext } from '@/lib/auth/session';
+import { cn } from '@/lib/utils';
 import { logHandler } from '@/middleware/logger';
 import { raw } from 'hono/html';
 
@@ -32,6 +35,16 @@ const Layout: FC<LayoutProps> = ({ title, children, c, authenticatedUser }) => {
     warningMessage,
   });
 
+  const toastNode = error ? (
+    <Toast variant="destructive" description={messageForAuthQueryError(error)} />
+  ) : warningMessage ? (
+    <Toast variant="default" description={warningMessage} />
+  ) : successMessage ? (
+    <Toast variant="default" description={successMessage} />
+  ) : null;
+
+  const hasToast = toastNode !== null;
+
   return (
     <>
       {raw('<!DOCTYPE html>')}
@@ -44,27 +57,13 @@ const Layout: FC<LayoutProps> = ({ title, children, c, authenticatedUser }) => {
           <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
           <link rel="stylesheet" href="/styles/tailwind.css" />
         </head>
-        <body className="flex min-h-screen w-full flex-col items-center justify-center p-4 bg-slate-950">
-          {error ? (
-            <Toast
-              variant="destructive"
-              description={
-                error === 'invalid_token' || error === 'tampered_token'
-                  ? 'Your verification link is invalid or has expired. Please request a new one.'
-                  : error === 'expired_token'
-                    ? 'Your verification link has expired. Please request a new one.'
-                    : error === 'token_revoked'
-                      ? 'This verification link has already been used. Please request a new one.'
-                      : error === 'verification_required'
-                        ? 'Please verify your email to continue.'
-                        : 'An error occurred. Please try again.'
-              }
-            />
-          ) : warningMessage ? (
-            <Toast variant="default" description={warningMessage} />
-          ) : successMessage ? (
-            <Toast variant="default" description={successMessage} />
-          ) : null}
+        <body
+          className={cn(
+            'flex min-h-screen w-full flex-col items-center justify-center bg-slate-950 p-4',
+            hasToast && 'pt-28 sm:pt-32'
+          )}
+        >
+          {hasToast ? <ToastRegion>{toastNode}</ToastRegion> : null}
 
           {showNav && <Navigation {...(userEmail && { userEmail })} />}
 
