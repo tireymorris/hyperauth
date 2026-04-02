@@ -2,4 +2,4 @@
 
 echo "Running pre-commit checks..."
 
-bun run precommit
+bun run check
