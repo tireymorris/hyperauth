@@ -57,8 +57,7 @@ bun run typecheck    # tsc --noEmit
 2. Server generates magic link token and stores it in SQLite
 3. You implement email sending for production (in development, the magic link is shown in the UI)
 4. User opens `/auth/verify?token=...`
-5. Server validates the token, sets access + refresh JWT cookies
-6. Magic token is blacklisted to prevent replay
+5. Server validates the token, sets access + refresh JWT cookies, blacklists the magic token, and **redirects to `/`**
 
 ## API Endpoints
 
@@ -67,11 +66,11 @@ bun run typecheck    # tsc --noEmit
 | `/`             | GET           | Home (requires access cookie)       |
 | `/login`        | GET           | Login page                          |
 | `/auth/login`   | POST          | Request magic link                  |
-| `/auth/verify`  | GET           | Verify magic link token             |
-| `/auth/refresh` | GET / POST\*  | Refresh access token                |
+| `/auth/verify`  | GET           | Verify magic link; sets cookies; redirects to `/` |
+| `/auth/refresh` | POST          | Refresh access token; optional `?redirect=/relative/path` on success (relative path only) |
 | `/auth/logout`  | GET           | Logout and clear cookies            |
 
-\*The refresh route is registered for all methods; GET and POST are what clients typically use.
+`GET /auth/refresh` returns **405** with `Allow: POST`.
 
 ## Tech Stack
 

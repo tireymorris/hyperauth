@@ -155,10 +155,11 @@ test.describe('Feature: Magic Link Verification', () => {
       // Navigate to the magic link to complete authentication
       await page.goto(magicLink!);
 
-      // Then I should be authenticated and see the success message
-      await expect(page.getByText("You're in!")).toBeVisible();
+      // Then I should be redirected home, already signed in
+      await expect(page).toHaveURL('/');
+      await expect(page.getByRole('heading', { name: 'Welcome back' })).toBeVisible();
       await expect(page.getByText('Signed in as verify@example.com')).toBeVisible();
-      await expect(page.getByRole('button', { name: 'Continue to dashboard' })).toBeVisible();
+      await expect(page.getByRole('button', { name: 'Sign out' })).toBeVisible();
     });
   });
 
@@ -245,12 +246,10 @@ test.describe('Feature: Logout', () => {
 
 test.describe('Feature: Token Refresh', () => {
   test.describe('Scenario: User attempts to refresh without token', () => {
-    test('should redirect to login when no refresh token exists', async ({ page }) => {
-      // When I visit the refresh endpoint without a token
-      await page.goto('/auth/refresh');
-
-      // Then I should be redirected to login
-      await expect(page).toHaveURL('/login');
+    test('should reject GET on refresh with 405', async ({ request }) => {
+      const response = await request.get('/auth/refresh');
+      expect(response.status()).toBe(405);
+      expect(response.headers()['allow']).toMatch(/POST/i);
     });
 
     test('should return 401 for API refresh without token', async ({ request }) => {
