@@ -1,15 +1,16 @@
 # HyperAuth
 
-A lightweight, secure, generic JWT authentication library built with Bun, Hono, and SQLite.
+A lightweight Bun + Hono **application** that demonstrates passwordless (magic link) sign-in, JWT access and refresh cookies, and SQLite-backed token storage. Use it as a reference implementation or starting point rather than as an installable npm package.
 
 ## Features
 
-- **Magic Link Authentication** - Passwordless authentication flow
-- **JWT Tokens** - Secure access and refresh tokens with HS256 signing
-- **SQLite Storage** - Persistent token storage with automatic cleanup
-- **Rate Limiting** - Built-in protection against brute force attacks
-- **CSRF Protection** - Cross-site request forgery prevention
-- **HTMX Integration** - Server-rendered UI with modern interactions
+- **Magic link authentication** — Passwordless flow; in development the link is shown in the UI; in production you wire up email delivery yourself.
+- **JWT tokens** — Access and refresh tokens signed with HS256 (`jose`).
+- **SQLite storage** — Magic-link and blacklist persistence via `bun:sqlite`, with periodic cleanup.
+- **CSRF protection** — Login `POST` requires a valid CSRF token from the form.
+- **Server-rendered UI** — HTML via [Hono JSX](https://hono.dev/docs/guides/jsx) (no React runtime, no HTMX in this repo).
+
+Rate limiting is **not** implemented yet; the e2e suite includes a skipped placeholder for when it is added.
 
 ## Quick Start
 
@@ -17,7 +18,7 @@ A lightweight, secure, generic JWT authentication library built with Bun, Hono, 
 # Install dependencies
 bun install
 
-# Copy environment file and configure
+# Optional: copy env template (the app runs with built-in dev defaults without this)
 cp .env.example .env
 
 # Start development server
@@ -26,43 +27,51 @@ bun dev
 
 ## Environment Variables
 
-| Variable     | Required | Description                              |
-| ------------ | -------- | ---------------------------------------- |
-| `SECRET_KEY` | Yes      | JWT signing key (min 32 characters)      |
-| `HOST`       | Yes      | Full URL (e.g., `http://localhost:3000`) |
-| `NODE_ENV`   | Yes      | `development`, `test`, or `production`   |
-| `PORT`       | No       | Server port (default: 3000)              |
-| `APP_NAME`   | No       | Application name (default: HyperAuth)    |
+Every variable has a **default** in [`src/utils/env.ts`](src/utils/env.ts), so local development works without a `.env`. **Set explicit values in production**, especially `SECRET_KEY` and `HOST`.
+
+| Variable     | Description                                                                                    |
+| ------------ | ---------------------------------------------------------------------------------------------- |
+| `SECRET_KEY` | JWT signing key (minimum 32 characters). Dev default is insecure; replace in production.       |
+| `HOST`       | Public origin (e.g. `http://localhost:3000`). Used for CORS in production.                     |
+| `NODE_ENV`   | `development`, `test`, or `production`.                                                        |
+| `PORT`       | HTTP port (default `3000`).                                                                    |
+| `APP_NAME`   | Display name (default `HyperAuth`).                                                            |
 
 ## Scripts
 
 ```bash
-bun dev              # Start dev server with hot reload
-bun run server       # Start server with watch mode
-bun run test:unit    # Run tests
-bun run lint         # Lint code
-bun run typecheck    # TypeScript check
-bun run precommit    # Run all checks
+bun run dev          # CSS build + Tailwind watch + server watch
+bun run server       # Server watch only (e.g. Playwright webServer)
+bun run build        # Production CSS + compile server binary
+bun run test         # Unit tests
+bun run test:e2e     # Playwright (install browsers: bunx playwright install)
+bun run check        # typecheck, format:check, lint, test
+bun run format       # Prettier write
+bun run lint         # ESLint
+bun run typecheck    # tsc --noEmit
 ```
 
 ## Authentication Flow
 
 1. User enters email on `/login`
-2. Server generates magic link token and stores in SQLite
-3. Application developer implements email sending (in development, magic link is displayed in UI)
-4. User clicks link → `/auth/verify?token=...`
-5. Server validates token, issues access + refresh JWT cookies
+2. Server generates magic link token and stores it in SQLite
+3. You implement email sending for production (in development, the magic link is shown in the UI)
+4. User opens `/auth/verify?token=...`
+5. Server validates the token, sets access + refresh JWT cookies
 6. Magic token is blacklisted to prevent replay
 
 ## API Endpoints
 
-| Endpoint        | Method   | Description              |
-| --------------- | -------- | ------------------------ |
-| `/login`        | GET      | Login page               |
-| `/auth/login`   | POST     | Request magic link       |
-| `/auth/verify`  | GET      | Verify magic link token  |
-| `/auth/refresh` | GET/POST | Refresh access token     |
-| `/auth/logout`  | GET      | Logout and clear cookies |
+| Endpoint        | Method        | Description                         |
+| --------------- | ------------- | ----------------------------------- |
+| `/`             | GET           | Home (requires access cookie)       |
+| `/login`        | GET           | Login page                          |
+| `/auth/login`   | POST          | Request magic link                  |
+| `/auth/verify`  | GET           | Verify magic link token             |
+| `/auth/refresh` | GET / POST\*  | Refresh access token                |
+| `/auth/logout`  | GET           | Logout and clear cookies            |
+
+\*The refresh route is registered for all methods; GET and POST are what clients typically use.
 
 ## Tech Stack
 
@@ -71,7 +80,3 @@ bun run precommit    # Run all checks
 - **Database**: SQLite (via `bun:sqlite`)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com)
 - **JWT**: [jose](https://github.com/panva/jose)
-
-## License
-
-MIT
