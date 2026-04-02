@@ -2,6 +2,7 @@ import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
 import { COOKIE_CONFIG, COOKIE_OPTIONS, ERROR_CODES, ERROR_CODE_MAP } from '@/lib/auth/constants';
 import { blacklistToken, generateCsrfToken, generateToken, verifyToken } from '@/lib/auth/tokens';
 import { generateMagicLink, validateMagicLink } from '@/lib/auth/magic';
+import { safeRelativePath } from '@/lib/auth/redirect';
 
 import { contextLog, logHandler } from '@/middleware/logger';
 import { env } from '@/utils/env';
@@ -308,33 +309,12 @@ authRouter.get('/auth/verify', async (c) => {
       maxAge: COOKIE_CONFIG.refresh.maxAge,
     });
 
-    logHandler.debug('auth', 'Cookies set, showing redirect page');
+    logHandler.debug('auth', 'Cookies set, redirecting to home');
 
     await blacklistToken(token);
     logHandler.debug('auth', 'Blacklisted magic token');
 
-    return c.html(
-      <Layout title="Welcome" c={c} authenticatedUser={payload}>
-        <div className="text-center space-y-6">
-          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
-            <svg className="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 13l4 4L19 7" />
-            </svg>
-          </div>
-          <div>
-            <h2 className="text-xl font-semibold text-slate-100">You're in!</h2>
-            <p className="mt-2 text-sm text-slate-400">
-              Signed in as <span className="text-cyan-400 font-medium">{payload.email}</span>
-            </p>
-          </div>
-          <a href="/" className="block">
-            <Button variant="primary" className="w-full">
-              Continue to dashboard
-            </Button>
-          </a>
-        </div>
-      </Layout>
-    );
+    return c.redirect('/', HTTP_STATUS.REDIRECT);
   } catch (verifyError) {
     logHandler.warn('auth', 'Token verification failed', {
       error: verifyError,
@@ -348,21 +328,25 @@ authRouter.get('/auth/verify', async (c) => {
   }
 });
 
-authRouter.all('/auth/refresh', async (c) => {
-  const isGet = c.req.method === 'GET';
-  const redirectUrl = isGet ? c.req.query('redirect') : null;
+authRouter.get('/auth/refresh', (c) => {
+  c.header('Allow', 'POST');
+  return c.body(null, HTTP_STATUS.METHOD_NOT_ALLOWED);
+});
+
+authRouter.post('/auth/refresh', async (c) => {
+  const redirectTarget = safeRelativePath(c.req.query('redirect'));
   const refreshToken = getCookie(c, COOKIE_CONFIG.refresh.name);
 
   contextLog(c, 'auth', 'debug', 'Refresh token request received', {
     method: c.req.method,
     hasToken: Boolean(refreshToken),
     tokenLength: refreshToken?.length,
-    hasRedirect: Boolean(redirectUrl),
+    hasRedirect: Boolean(redirectTarget),
   });
 
   if (!refreshToken) {
     contextLog(c, 'auth', 'warn', 'Missing refresh token');
-    return isGet ? c.redirect('/login') : c.json({ message: 'Unauthorized' }, HTTP_STATUS.UNAUTHORIZED);
+    return c.json({ message: 'Unauthorized' }, HTTP_STATUS.UNAUTHORIZED);
   }
 
   try {
@@ -377,7 +361,7 @@ authRouter.all('/auth/refresh', async (c) => {
 
     if (payload.type !== 'refresh') {
       contextLog(c, 'auth', 'warn', 'Invalid token type', { type: payload.type });
-      return isGet ? c.redirect('/login') : c.json({ message: 'Invalid token' }, HTTP_STATUS.FORBIDDEN);
+      return c.json({ message: 'Invalid token' }, HTTP_STATUS.FORBIDDEN);
     }
 
     const newAccessToken = await generateToken({ type: 'access', email: payload.email, role: payload.role });
@@ -390,10 +374,9 @@ authRouter.all('/auth/refresh', async (c) => {
       expires: new Date(Date.now() + COOKIE_CONFIG.access.maxAge * 1000),
     });
 
-    if (isGet) {
-      const targetUrl = redirectUrl || '/login';
-      contextLog(c, 'auth', 'debug', 'Redirecting after token refresh', { targetUrl });
-      return c.redirect(targetUrl);
+    if (redirectTarget) {
+      contextLog(c, 'auth', 'debug', 'Redirecting after token refresh', { targetUrl: redirectTarget });
+      return c.redirect(redirectTarget);
     }
 
     return c.json({ message: 'Token refreshed' }, HTTP_STATUS.OK);
@@ -403,9 +386,7 @@ authRouter.all('/auth/refresh', async (c) => {
       code: error instanceof Error && 'code' in error ? (error as { code: string }).code : 'unknown',
     });
 
-    return isGet
-      ? c.redirect('/login')
-      : c.json({ message: 'Failed to refresh token' }, HTTP_STATUS.INTERNAL_SERVER_ERROR);
+    return c.json({ message: 'Failed to refresh token' }, HTTP_STATUS.INTERNAL_SERVER_ERROR);
   }
 });
 
