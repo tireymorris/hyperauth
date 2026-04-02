@@ -9,20 +9,13 @@ import { raw } from 'hono/html';
 
 type LayoutProps = {
   title: string;
-  currentPath?: string;
   children: Child;
   c: Context;
-  notification?: {
-    type: 'info' | 'success' | 'warning' | 'error';
-    message: string;
-  };
   userEmail?: string;
-  justLoggedIn?: boolean;
-  spacing?: 'sm' | 'md' | 'lg';
   authenticatedUser?: TokenPayload | null;
 };
 
-const Layout: FC<LayoutProps> = ({ title, children, c, spacing = 'lg', authenticatedUser }) => {
+const Layout: FC<LayoutProps> = ({ title, children, c, authenticatedUser }) => {
   const currentUser = authenticatedUser || getUserFromContext(c);
   const userEmail = currentUser?.email;
   const pathname = c.req.path || '/';
@@ -39,12 +32,6 @@ const Layout: FC<LayoutProps> = ({ title, children, c, spacing = 'lg', authentic
     warningMessage,
   });
 
-  const spacingClasses = {
-    sm: 'space-y-4',
-    md: 'space-y-6',
-    lg: 'space-y-8',
-  };
-
   return (
     <>
       {raw('<!DOCTYPE html>')}
@@ -57,7 +44,7 @@ const Layout: FC<LayoutProps> = ({ title, children, c, spacing = 'lg', authentic
           <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
           <link rel="stylesheet" href="/styles/tailwind.css" />
         </head>
-        <body class="flex min-h-screen w-full flex-col items-center justify-center p-4 bg-slate-950">
+        <body className="flex min-h-screen w-full flex-col items-center justify-center p-4 bg-slate-950">
           {error ? (
             <Toast
               variant="destructive"
@@ -79,11 +66,11 @@ const Layout: FC<LayoutProps> = ({ title, children, c, spacing = 'lg', authentic
             <Toast variant="default" description={successMessage} />
           ) : null}
 
-          {showNav && <Navigation {...(userEmail && { userEmail })} currentPath={pathname} />}
+          {showNav && <Navigation {...(userEmail && { userEmail })} />}
 
-          <main class="relative z-10 w-full max-w-md">
-            <div class="bg-slate-900 border border-slate-800 rounded-lg p-8 shadow-xl">
-              <div class={spacingClasses[spacing]}>{children}</div>
+          <main className="relative z-10 w-full max-w-md">
+            <div className="bg-slate-900 border border-slate-800 rounded-lg p-8 shadow-xl">
+              <div className="space-y-8">{children}</div>
             </div>
           </main>
         </body>

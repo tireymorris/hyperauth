@@ -45,12 +45,12 @@ authRouter.get('/login', async (c) => {
   logHandler.debug('token', 'Generated CSRF token');
   return c.html(
     <Layout title="Sign in" c={c}>
-      <form action="/auth/login" method="post" class="space-y-6">
+      <form action="/auth/login" method="post" className="space-y-6">
         <input type="hidden" name="csrf" value={csrfToken} />
 
-        <div class="text-center space-y-3">
-          <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-violet-500/20 border border-white/10 mb-2">
-            <svg class="w-7 h-7 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="text-center space-y-3">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-violet-500/20 border border-white/10 mb-2">
+            <svg className="w-7 h-7 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
@@ -59,12 +59,12 @@ authRouter.get('/login', async (c) => {
               />
             </svg>
           </div>
-          <h1 class="text-2xl font-semibold gradient-text text-glow">Welcome back</h1>
-          <p class="text-sm text-slate-400">Enter your email to receive a secure login link</p>
+          <h1 className="text-2xl font-semibold gradient-text text-glow">Welcome back</h1>
+          <p className="text-sm text-slate-400">Enter your email to receive a secure login link</p>
         </div>
 
-        <div class="space-y-2">
-          <label for="email" class="block text-sm font-medium text-slate-300">
+        <div className="space-y-2">
+          <label for="email" className="block text-sm font-medium text-slate-300">
             Email address
           </label>
           <Input id="email" name="email" type="email" placeholder="you@example.com" required />
@@ -75,11 +75,11 @@ authRouter.get('/login', async (c) => {
         </Button>
       </form>
 
-      <div class="mt-8 pt-6 border-t border-white/5">
-        <p class="text-center text-xs text-slate-500">
-          Protected by <span class="text-slate-400 font-medium">HyperAuth</span>
-          <span class="mx-2 text-slate-600">•</span>
-          <span class="text-slate-500">End-to-end encrypted</span>
+      <div className="mt-8 pt-6 border-t border-white/5">
+        <p className="text-center text-xs text-slate-500">
+          Protected by <span className="text-slate-400 font-medium">HyperAuth</span>
+          <span className="mx-2 text-slate-600">•</span>
+          <span className="text-slate-500">End-to-end encrypted</span>
         </p>
       </div>
     </Layout>,
@@ -115,15 +115,15 @@ authRouter.post('/auth/login', async (c) => {
     c.status(HTTP_STATUS.BAD_REQUEST);
     return c.html(
       <Layout title="Invalid Email" c={c}>
-        <div class="text-center space-y-6">
-          <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-rose-500/10 border border-rose-500/20">
-            <svg class="w-7 h-7 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="text-center space-y-6">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-rose-500/10 border border-rose-500/20">
+            <svg className="w-7 h-7 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </div>
           <div>
-            <h2 class="text-xl font-semibold text-slate-100">Invalid email format</h2>
-            <p class="mt-2 text-sm text-slate-400">Please enter a valid email address to continue.</p>
+            <h2 className="text-xl font-semibold text-slate-100">Invalid email format</h2>
+            <p className="mt-2 text-sm text-slate-400">Please enter a valid email address to continue.</p>
           </div>
           <a href="/login">
             <Button variant="secondary" className="w-full">
@@ -144,15 +144,15 @@ authRouter.post('/auth/login', async (c) => {
       c.status(HTTP_STATUS.INTERNAL_SERVER_ERROR);
       return c.html(
         <Layout title="Error Generating Link" c={c}>
-          <div class="text-center space-y-6">
-            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-rose-500/10 border border-rose-500/20">
-              <svg class="w-7 h-7 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="text-center space-y-6">
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-rose-500/10 border border-rose-500/20">
+              <svg className="w-7 h-7 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </div>
             <div>
-              <h2 class="text-xl font-semibold text-slate-100">Unable to generate link</h2>
-              <p class="mt-2 text-sm text-slate-400">
+              <h2 className="text-xl font-semibold text-slate-100">Unable to generate link</h2>
+              <p className="mt-2 text-sm text-slate-400">
                 There was an issue generating the login link. Please try again later.
               </p>
             </div>
@@ -176,9 +176,9 @@ authRouter.post('/auth/login', async (c) => {
       c.status(HTTP_STATUS.OK);
       return c.html(
         <Layout title="Development Login" c={c}>
-          <div class="text-center space-y-6">
-            <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/20">
-              <svg class="w-7 h-7 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="text-center space-y-6">
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/20">
+              <svg className="w-7 h-7 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
@@ -188,11 +188,11 @@ authRouter.post('/auth/login', async (c) => {
               </svg>
             </div>
             <div>
-              <h2 class="text-xl font-semibold text-slate-100">Development mode</h2>
-              <p class="mt-2 text-sm text-slate-400">Use this magic link to sign in:</p>
+              <h2 className="text-xl font-semibold text-slate-100">Development mode</h2>
+              <p className="mt-2 text-sm text-slate-400">Use this magic link to sign in:</p>
             </div>
-            <div class="bg-slate-800/50 rounded-lg p-4 border border-white/10">
-              <a href={magicLink} class="text-sm text-cyan-400 hover:text-cyan-300 break-all font-mono">
+            <div className="bg-slate-800/50 rounded-lg p-4 border border-white/10">
+              <a href={magicLink} className="text-sm text-cyan-400 hover:text-cyan-300 break-all font-mono">
                 {magicLink}
               </a>
             </div>
@@ -209,9 +209,9 @@ authRouter.post('/auth/login', async (c) => {
     c.status(HTTP_STATUS.OK);
     return c.html(
       <Layout title="Check Your Email" c={c}>
-        <div class="text-center space-y-6">
-          <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/20">
-            <svg class="w-7 h-7 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="text-center space-y-6">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/20">
+            <svg className="w-7 h-7 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 stroke-linecap="round"
                 stroke-linejoin="round"
@@ -221,13 +221,13 @@ authRouter.post('/auth/login', async (c) => {
             </svg>
           </div>
           <div>
-            <h2 class="text-xl font-semibold text-slate-100">Check your inbox</h2>
-            <p class="mt-2 text-sm text-slate-400">
-              We've sent a magic link to <span class="text-cyan-400 font-medium">{email}</span>
+            <h2 className="text-xl font-semibold text-slate-100">Check your inbox</h2>
+            <p className="mt-2 text-sm text-slate-400">
+              We've sent a magic link to <span className="text-cyan-400 font-medium">{email}</span>
             </p>
           </div>
-          <div class="pt-4 border-t border-white/5">
-            <p class="text-xs text-slate-500">Can't find the email? Check your spam folder.</p>
+          <div className="pt-4 border-t border-white/5">
+            <p className="text-xs text-slate-500">Can't find the email? Check your spam folder.</p>
           </div>
         </div>
       </Layout>
@@ -239,15 +239,15 @@ authRouter.post('/auth/login', async (c) => {
     c.status(HTTP_STATUS.INTERNAL_SERVER_ERROR);
     return c.html(
       <Layout title="Error" c={c}>
-        <div class="text-center space-y-6">
-          <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-rose-500/10 border border-rose-500/20">
-            <svg class="w-7 h-7 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="text-center space-y-6">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-rose-500/10 border border-rose-500/20">
+            <svg className="w-7 h-7 text-rose-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </div>
           <div>
-            <h2 class="text-xl font-semibold text-slate-100">Something went wrong</h2>
-            <p class="mt-2 text-sm text-slate-400">An unexpected error occurred. Please try again later.</p>
+            <h2 className="text-xl font-semibold text-slate-100">Something went wrong</h2>
+            <p className="mt-2 text-sm text-slate-400">An unexpected error occurred. Please try again later.</p>
           </div>
           <a href="/login">
             <Button variant="secondary" className="w-full">
@@ -315,19 +315,19 @@ authRouter.get('/auth/verify', async (c) => {
 
     return c.html(
       <Layout title="Welcome" c={c} authenticatedUser={payload}>
-        <div class="text-center space-y-6">
-          <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
-            <svg class="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="text-center space-y-6">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
+            <svg className="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 13l4 4L19 7" />
             </svg>
           </div>
           <div>
-            <h2 class="text-xl font-semibold text-slate-100">You're in!</h2>
-            <p class="mt-2 text-sm text-slate-400">
-              Signed in as <span class="text-cyan-400 font-medium">{payload.email}</span>
+            <h2 className="text-xl font-semibold text-slate-100">You're in!</h2>
+            <p className="mt-2 text-sm text-slate-400">
+              Signed in as <span className="text-cyan-400 font-medium">{payload.email}</span>
             </p>
           </div>
-          <a href="/" class="block">
+          <a href="/" className="block">
             <Button variant="primary" className="w-full">
               Continue to dashboard
             </Button>

@@ -52,19 +52,19 @@ app.get('/', async (c) => {
 
     return c.html(
       <Layout title="Home" c={c} userEmail={payload.email}>
-        <div class="text-center space-y-6">
-          <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
-            <svg class="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="text-center space-y-6">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
+            <svg className="w-7 h-7 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 13l4 4L19 7" />
             </svg>
           </div>
           <div>
-            <h1 class="text-2xl font-semibold text-slate-100">Welcome back</h1>
-            <p class="mt-2 text-sm text-slate-400">
-              Signed in as <span class="text-cyan-400 font-medium">{payload.email}</span>
+            <h1 className="text-2xl font-semibold text-slate-100">Welcome back</h1>
+            <p className="mt-2 text-sm text-slate-400">
+              Signed in as <span className="text-cyan-400 font-medium">{payload.email}</span>
             </p>
           </div>
-          <a href="/auth/logout" class="block">
+          <a href="/auth/logout" className="block">
             <Button variant="secondary" className="w-full">
               Sign out
             </Button>
@@ -95,9 +95,9 @@ app.notFound((c) => {
 
   return c.html(
     <Layout title="Not Found" c={c}>
-      <div class="text-center space-y-6">
-        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-slate-500/10 border border-slate-500/20">
-          <svg class="w-7 h-7 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="text-center space-y-6">
+        <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-slate-500/10 border border-slate-500/20">
+          <svg className="w-7 h-7 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -107,10 +107,10 @@ app.notFound((c) => {
           </svg>
         </div>
         <div>
-          <h2 class="text-xl font-semibold text-slate-100">Page not found</h2>
-          <p class="mt-2 text-sm text-slate-400">The page you're looking for doesn't exist.</p>
+          <h2 className="text-xl font-semibold text-slate-100">Page not found</h2>
+          <p className="mt-2 text-sm text-slate-400">The page you're looking for doesn't exist.</p>
         </div>
-        <a href="/" class="block">
+        <a href="/" className="block">
           <Button variant="secondary" className="w-full">
             Go back home
           </Button>
