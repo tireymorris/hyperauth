@@ -7,11 +7,6 @@ export interface TokenPayload extends Record<string, unknown> {
   role: UserRole;
 }
 
-export interface VerifiedToken extends TokenPayload {
-  exp: number;
-  iat: number;
-}
-
 export const TOKEN_TYPES = ['access', 'refresh', 'magic', 'csrf'] as const;
 export type TokenType = (typeof TOKEN_TYPES)[number];
 

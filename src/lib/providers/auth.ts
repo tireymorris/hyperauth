@@ -144,7 +144,7 @@ class SQLiteAuthProvider implements AuthProvider {
 
 let authProvider: AuthProvider | null = null;
 
-export async function initializeAuthProvider(): Promise<void> {
+async function initializeAuthProvider(): Promise<void> {
   authProvider = new SQLiteAuthProvider();
   logHandler.info('api', `Auth provider initialized: ${authProvider.constructor.name}`);
 }

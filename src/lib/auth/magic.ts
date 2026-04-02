@@ -1,7 +1,7 @@
 import { generateToken } from '@/lib/auth/tokens';
 import { TOKEN_EXPIRY_SECONDS } from '@/lib/auth/constants';
 import { z } from 'zod';
-import { getAuthProvider } from '@/lib/providers';
+import { getAuthProvider } from '@/lib/providers/auth';
 
 export async function generateMagicLink(email: string): Promise<{ token: string | null; error: string | null }> {
   const normalizedEmail = email.trim().toLowerCase();

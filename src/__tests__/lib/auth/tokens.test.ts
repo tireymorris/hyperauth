@@ -54,7 +54,6 @@ mock.module('@/lib/providers/auth', () => {
         return mockBlacklist.has(token);
       },
     }),
-    initializeAuthProvider: async (): Promise<void> => {},
   };
 });
 

@@ -21,19 +21,3 @@ export function getUserFromContext(c: Context): TokenPayload | null {
     return null;
   }
 }
-
-export function isAuthenticated(c: Context): boolean {
-  const user = getUserFromContext(c);
-  const isAuth = !!user;
-  if (!isAuth) {
-    logHandler.debug('auth', 'User not authenticated');
-  }
-  return isAuth;
-}
-
-export function getBaseUrl(c: Context): string {
-  const url = new URL(c.req.url);
-  const baseUrl = `${url.protocol}//${url.host}`;
-  logHandler.debug('http', 'Generated base URL', { baseUrl });
-  return baseUrl;
-}
