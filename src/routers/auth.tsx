@@ -1,8 +1,17 @@
 import { deleteCookie, getCookie, setCookie } from 'hono/cookie';
-import { COOKIE_CONFIG, COOKIE_OPTIONS, ERROR_CODES, ERROR_CODE_MAP } from '@/lib/auth/constants';
-import { blacklistToken, generateCsrfToken, generateToken, verifyToken } from '@/lib/auth/tokens';
-import { generateMagicLink, validateMagicLink } from '@/lib/auth/magic';
-import { safeRelativePath } from '@/lib/auth/redirect';
+import {
+  COOKIE_CONFIG,
+  COOKIE_OPTIONS,
+  ERROR_CODES,
+  ERROR_CODE_MAP,
+  blacklistToken,
+  generateCsrfToken,
+  generateMagicLink,
+  generateToken,
+  safeRelativePath,
+  validateMagicLink,
+  verifyToken,
+} from '@/lib/auth';
 
 import { contextLog, logHandler } from '@/middleware/logger';
 import { env } from '@/utils/env';

@@ -12,7 +12,7 @@ import { secureHeaders } from 'hono/secure-headers';
 import { HTTP_STATUS } from '@/utils/constants';
 import Layout from '@/components/Layout';
 import Button from '@/components/Button';
-import { verifyToken } from '@/lib/auth/tokens';
+import { verifyToken } from '@/lib/auth';
 
 const app = new Hono();
 logHandler.info('http', 'Initializing server', {

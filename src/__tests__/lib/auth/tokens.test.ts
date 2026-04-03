@@ -1,13 +1,17 @@
 import { afterEach, beforeEach, describe, expect, mock, test } from 'bun:test';
 import {
+  JOSE_ERROR_CODES,
+  TOKEN_TYPES,
+  type TokenPayload,
+  USER_ROLES,
+  type UserRole,
   blacklistToken,
   generateCsrfToken,
   generateToken,
   resetBlacklist,
   validateTokenPayload,
   verifyToken,
-} from '@/lib/auth/tokens';
-import { JOSE_ERROR_CODES, TOKEN_TYPES, type TokenPayload, USER_ROLES, type UserRole } from '@/lib/auth/constants';
+} from '@/lib/auth';
 
 let mockEnv = (key: string): string => {
   if (key === 'SECRET_KEY') {

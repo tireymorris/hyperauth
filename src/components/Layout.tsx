@@ -1,11 +1,9 @@
 import type { Child, FC } from 'hono/jsx';
 import type { Context } from 'hono';
-import type { TokenPayload } from '@/lib/auth/constants';
+import { type TokenPayload, getUserFromContext, messageForAuthQueryError } from '@/lib/auth';
 import Navigation from '@/components/Navigation';
 import Toast from '@/components/Toast';
 import ToastRegion from '@/components/ToastRegion';
-import { messageForAuthQueryError } from '@/lib/auth/messages';
-import { getUserFromContext } from '@/lib/auth/session';
 import { cn } from '@/lib/utils';
 import { logHandler } from '@/middleware/logger';
 import { raw } from 'hono/html';
