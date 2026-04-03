@@ -1,81 +1,70 @@
 # HyperAuth
 
-A lightweight Bun + Hono **application** that demonstrates passwordless (magic link) sign-in, JWT access and refresh cookies, and SQLite-backed token storage. Use it as a reference implementation or starting point rather than as an installable npm package.
+HyperAuth is a Bun + Hono reference app for passwordless auth with magic links.
+Small enough to read in one sitting, complete enough to use as a base.
 
-## Features
+## Philosophy
 
-- **Magic link authentication** — Passwordless flow; in development the link is shown in the UI; in production you wire up email delivery yourself.
-- **JWT tokens** — Access and refresh tokens signed with HS256 (`jose`).
-- **SQLite storage** — Magic-link and blacklist persistence via `bun:sqlite`, with periodic cleanup.
-- **CSRF protection** — Login `POST` requires a valid CSRF token from the form.
-- **Server-rendered UI** — HTML via [Hono JSX](https://hono.dev/docs/guides/jsx) (no React runtime, no HTMX in this repo).
+- Keep auth understandable end to end.
+- Prefer explicit server behavior over abstraction.
+- Use practical defaults for development, explicit values for production.
+- Treat this as an implementation blueprint, not a package.
 
-Rate limiting is **not** implemented yet; the e2e suite includes a skipped placeholder for when it is added.
+## Includes
+
+- Magic-link sign-in flow
+- Access + refresh JWT cookies (`jose`, HS256)
+- SQLite-backed magic-link and blacklist storage (`bun:sqlite`)
+- CSRF protection on `POST /auth/login`
+- Server-rendered HTML via Hono JSX
+
+Rate limiting is not implemented yet.
 
 ## Quick Start
 
 ```bash
-# Install dependencies
 bun install
-
-# Optional: copy env template (the app runs with built-in dev defaults without this)
-cp .env.example .env
-
-# Start development server
+cp .env.example .env # optional for local development
 bun dev
 ```
 
-## Environment Variables
+The app runs without `.env` via defaults in `src/utils/env.ts`.
+For production, set explicit values for `SECRET_KEY` and `HOST`.
 
-Every variable has a **default** in [`src/utils/env.ts`](src/utils/env.ts), so local development works without a `.env`. **Set explicit values in production**, especially `SECRET_KEY` and `HOST`.
+## Runtime Notes
 
-| Variable     | Description                                                                                    |
-| ------------ | ---------------------------------------------------------------------------------------------- |
-| `SECRET_KEY` | JWT signing key (minimum 32 characters). Dev default is insecure; replace in production.       |
-| `HOST`       | Public origin (e.g. `http://localhost:3000`). Used for CORS in production.                     |
-| `NODE_ENV`   | `development`, `test`, or `production`.                                                        |
-| `PORT`       | HTTP port (default `3000`).                                                                    |
-| `APP_NAME`   | Display name (default `HyperAuth`).                                                            |
+- Stack: Bun, Hono, SQLite (`bun:sqlite`), Tailwind CSS, `jose`
+- Defaults come from `src/utils/env.ts`; `.env` is optional in local development
+- Set production values explicitly: `SECRET_KEY` (JWT signing key, min 32 chars) and `HOST` (public origin for CORS)
+- Other env vars: `NODE_ENV`, `PORT`, `APP_NAME`
 
 ## Scripts
 
-```bash
-bun run dev          # CSS build + Tailwind watch + server watch
-bun run server       # Server watch only (e.g. Playwright webServer)
-bun run build        # Production CSS + compile server binary
-bun run test         # Unit tests
-bun run test:e2e     # Playwright (install browsers: bunx playwright install)
-bun run check        # typecheck, format:check, lint, test
-bun run format       # Prettier write
-bun run lint         # ESLint
-bun run typecheck    # tsc --noEmit
-```
+- `bun run dev` - CSS + server watch
+- `bun run build` - production build
+- `bun run test` - unit tests
+- `bun run test:e2e` - Playwright tests
+- `bun run check` - typecheck + format:check + lint + test
 
-## Authentication Flow
+## Auth Flow
 
-1. User enters email on `/login`
-2. Server generates magic link token and stores it in SQLite
-3. You implement email sending for production (in development, the magic link is shown in the UI)
-4. User opens `/auth/verify?token=...`
-5. Server validates the token, sets access + refresh JWT cookies, blacklists the magic token, and **redirects to `/`**
+1. `GET /login` renders the form and CSRF token.
+2. `POST /auth/login` validates email + CSRF and creates a magic-link token.
+3. In development, the magic link is shown in the UI; in production, you provide delivery.
+4. `GET /auth/verify?token=...` verifies and consumes the magic token.
+5. Server sets access + refresh cookies and redirects to `/`.
 
-## API Endpoints
+## Routes (Core)
 
-| Endpoint        | Method        | Description                         |
-| --------------- | ------------- | ----------------------------------- |
-| `/`             | GET           | Home (requires access cookie)       |
-| `/login`        | GET           | Login page                          |
-| `/auth/login`   | POST          | Request magic link                  |
-| `/auth/verify`  | GET           | Verify magic link; sets cookies; redirects to `/` |
-| `/auth/refresh` | POST          | Refresh access token; optional `?redirect=/relative/path` on success (relative path only) |
-| `/auth/logout`  | GET           | Logout and clear cookies            |
 
-`GET /auth/refresh` returns **405** with `Allow: POST`.
+| Route           | Method | Purpose                                                    |
+| --------------- | ------ | ---------------------------------------------------------- |
+| `/`             | GET    | Home; redirects to `/login` if no valid access token.      |
+| `/login`        | GET    | Sign-in form.                                              |
+| `/auth/login`   | POST   | Request magic link.                                        |
+| `/auth/verify`  | GET    | Verify magic link and create session cookies.              |
+| `/auth/refresh` | POST   | Refresh access token; optional `?redirect=/relative/path`. |
+| `/auth/logout`  | GET    | Clear session cookies and logout.                          |
 
-## Tech Stack
 
-- **Runtime**: [Bun](https://bun.sh)
-- **Framework**: [Hono](https://hono.dev)
-- **Database**: SQLite (via `bun:sqlite`)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com)
-- **JWT**: [jose](https://github.com/panva/jose)
+`GET /auth/refresh` returns `405` with `Allow: POST`.
